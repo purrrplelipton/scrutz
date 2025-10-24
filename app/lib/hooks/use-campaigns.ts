@@ -9,9 +9,6 @@ import type {
   UpdateCampaignDto,
 } from "~/types";
 
-/**
- * Fetch all campaigns with optional filters
- */
 export function useCampaigns(filters: CampaignFilters = {}) {
   return useQuery({
     queryKey: queryKeys.campaigns.list(filters as Record<string, unknown>),
@@ -23,8 +20,6 @@ export function useCampaigns(filters: CampaignFilters = {}) {
         }
       );
 
-      // Handle API returning array instead of paginated response
-      // TODO: Remove this adapter once API returns proper pagination metadata
       if (Array.isArray(response)) {
         return {
           data: response,
@@ -36,26 +31,18 @@ export function useCampaigns(filters: CampaignFilters = {}) {
 
       return response;
     },
-    // Keep previous data while fetching new data
     placeholderData: (previousData) => previousData,
   });
 }
 
-/**
- * Fetch a single campaign by ID
- */
 export function useCampaign(id: string) {
   return useQuery({
     queryKey: queryKeys.campaigns.detail(id),
     queryFn: () => api.get<Campaign>(`/Campaign/${id}`),
-    // Don't fetch if no ID provided
     enabled: !!id,
   });
 }
 
-/**
- * Create a new campaign
- */
 export function useCreateCampaign() {
   const queryClient = useQueryClient();
   return useMutation({
@@ -73,9 +60,6 @@ export function useCreateCampaign() {
   });
 }
 
-/**
- * Update an existing campaign
- */
 export function useUpdateCampaign() {
   const queryClient = useQueryClient();
 
@@ -91,13 +75,11 @@ export function useUpdateCampaign() {
       return campaign;
     },
     onSuccess: (updatedCampaign) => {
-      // Update the specific campaign in cache
       queryClient.setQueryData(
         queryKeys.campaigns.detail(updatedCampaign.id),
         updatedCampaign
       );
 
-      // Invalidate lists to reflect changes
       queryClient.invalidateQueries({
         queryKey: queryKeys.campaigns.lists(),
       });
@@ -110,9 +92,6 @@ export function useUpdateCampaign() {
   });
 }
 
-/**
- * Delete a campaign
- */
 export function useDeleteCampaign() {
   const queryClient = useQueryClient();
 
@@ -121,12 +100,10 @@ export function useDeleteCampaign() {
       return await api.delete(`/Campaign/${id}`);
     },
     onSuccess: (_, deletedId) => {
-      // Remove from cache
       queryClient.removeQueries({
         queryKey: queryKeys.campaigns.detail(deletedId),
       });
 
-      // Invalidate lists
       queryClient.invalidateQueries({
         queryKey: queryKeys.campaigns.lists(),
       });
@@ -139,9 +116,6 @@ export function useDeleteCampaign() {
   });
 }
 
-/**
- * Toggle campaign status between Active and Inactive
- */
 export function useToggleCampaignStatus() {
   const queryClient = useQueryClient();
 
@@ -157,19 +131,15 @@ export function useToggleCampaignStatus() {
         id,
         campaignStatus: status === "Active",
       }),
-    // Optimistic update
     onMutate: async ({ id, status }) => {
-      // Cancel outgoing queries
       await queryClient.cancelQueries({
         queryKey: queryKeys.campaigns.detail(id),
       });
 
-      // Snapshot previous value
       const previousCampaign = queryClient.getQueryData<Campaign>(
         queryKeys.campaigns.detail(id)
       );
 
-      // Optimistically update
       if (previousCampaign) {
         queryClient.setQueryData(queryKeys.campaigns.detail(id), {
           ...previousCampaign,
@@ -177,10 +147,8 @@ export function useToggleCampaignStatus() {
         });
       }
 
-      // Return context for rollback
       return { previousCampaign };
     },
-    // Rollback on error
     onError: (_err, { id }, context) => {
       if (context?.previousCampaign) {
         queryClient.setQueryData(
@@ -189,9 +157,7 @@ export function useToggleCampaignStatus() {
         );
       }
     },
-    // Always refetch after success or error
     onSettled: (_data, _error, { id }) => {
-      // Invalidate both detail and list queries
       queryClient.invalidateQueries({
         queryKey: queryKeys.campaigns.detail(id),
       });

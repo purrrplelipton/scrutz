@@ -1,6 +1,5 @@
 import { Icon } from "@iconify-icon/react";
 import type { ComponentProps } from "react";
-import { Link } from "react-router";
 import { cn } from "~/lib/utils";
 
 function Pagination({ className, ...props }: ComponentProps<"nav">) {
@@ -28,58 +27,32 @@ function PaginationItem({ ...props }: ComponentProps<"li">) {
   return <li data-slot="pagination-item" {...props} />;
 }
 
-type PaginationLinkProps = {
+type PaginationButtonProps = {
   isActive?: boolean;
-} & ComponentProps<typeof Link>;
+} & ComponentProps<"button">;
 
-function PaginationLink({
+function PaginationButton({
   className,
   isActive,
   ...props
-}: PaginationLinkProps) {
+}: PaginationButtonProps) {
   return (
-    <Link
+    <button
+      type="button"
       aria-current={isActive ? "page" : undefined}
-      data-slot="pagination-link"
+      data-slot="pagination-button"
       data-active={isActive}
       className={cn(
-        "rounded-full h-6 min-w-6 content-center text-center inline-block",
-        { "text-white bg-[#247B7B] font-bold": isActive },
+        "rounded-full h-6 min-w-6 content-center text-center inline-block transition-all duration-200 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed",
+        {
+          "text-white bg-teal-600 font-bold shadow-md": isActive,
+          "hover:bg-gray-100": !isActive,
+        },
         className
       )}
-      inert={isActive || undefined}
+      disabled={isActive}
       {...props}
     />
-  );
-}
-
-function PaginationPrevious({
-  className,
-  ...props
-}: ComponentProps<typeof PaginationLink>) {
-  return (
-    <PaginationLink
-      aria-label="Go to previous page"
-      className={cn("text-[#808080]", className)}
-      {...props}
-    >
-      <Icon icon="material-symbols:chevron-left" />
-    </PaginationLink>
-  );
-}
-
-function PaginationNext({
-  className,
-  ...props
-}: ComponentProps<typeof PaginationLink>) {
-  return (
-    <PaginationLink
-      aria-label="Go to next page"
-      className={cn("text-[#808080]", className)}
-      {...props}
-    >
-      <Icon icon="material-symbols:chevron-right" />
-    </PaginationLink>
   );
 }
 
@@ -100,9 +73,7 @@ function PaginationEllipsis({ className, ...props }: ComponentProps<"span">) {
 export {
   Pagination,
   PaginationContent,
-  PaginationLink,
+  PaginationButton,
   PaginationItem,
-  PaginationPrevious,
-  PaginationNext,
   PaginationEllipsis,
 };

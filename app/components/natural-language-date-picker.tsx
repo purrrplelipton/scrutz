@@ -60,7 +60,6 @@ export function NaturalLanguageDatePicker({
   const [date, setDate] = useState<Date | undefined>(value);
   const [month, setMonth] = useState<Date | undefined>(date);
 
-  // Update input value when prop changes
   useEffect(() => {
     if (!value) {
       setDate(undefined);

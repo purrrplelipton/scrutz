@@ -1,18 +1,60 @@
 import { Icon } from "@iconify-icon/react";
-import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
-import { Link, NavLink, Outlet } from "react-router";
+import { useClickAway } from "@uidotdev/usehooks";
+import { useState } from "react";
+import { Link, NavLink, Outlet, useNavigate } from "react-router";
 import { ScrutzIcon, ScrutzText } from "~/assets/svgs";
+import { SearchResults } from "~/components/search-results";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
 } from "~/components/ui/input-group";
+import { useSearch } from "~/lib/hooks/use-search";
 
 export default function AppLayout() {
+  const navigate = useNavigate();
+  const [showResults, setShowResults] = useState(false);
+  const searchContainerRef = useClickAway<HTMLDivElement>(() => {
+    setShowResults(false);
+  });
+
+  const {
+    searchQuery,
+    setSearchQuery,
+    results,
+    isLoading,
+    hasQuery,
+    selectedIndex,
+    handleKeyDown,
+    resetSearch,
+    totalCount,
+    page,
+    setPage,
+    pageSize,
+  } = useSearch();
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    handleKeyDown(e);
+
+    if (e.key === "Enter" && results.length > 0) {
+      navigate(`/campaign/${results[selectedIndex].id}`);
+      resetSearch();
+      setShowResults(false);
+    } else if (e.key === "Escape") {
+      setShowResults(false);
+    }
+  };
+
+  const handleSelect = () => {
+    resetSearch();
+    setShowResults(false);
+  };
+
   return (
     <>
-      <aside className="grow overflow-auto w-1/5 max-w-2xs bg-[#F0F4F4] flex flex-col">
+      <aside className="grow overflow-auto w-1/5 max-w-2xs bg-gray-100 flex flex-col">
         <header className="px-5">
           <div className="flex items-center h-20">
             <Link to="/" className="flex items-center gap-4">
@@ -22,10 +64,10 @@ export default function AppLayout() {
           </div>
         </header>
         <div className="p-5 grow overflow-auto flex flex-col">
-          <nav className="flex flex-col items-stretch gap-4 *:flex *:items-center *:aria-[current='page']:text-[#247B7B] *:aria-[current='page']:bg-white *:rounded *:px-8 *:py-2 *:text-sm *:*:first:text-2xl *:font-medium *:aria-[current='page']:font-semibold *:gap-2">
+          <nav className="flex flex-col items-stretch gap-4 *:flex *:items-center *:aria-[current='page']:text-teal-600 *:aria-[current='page']:bg-white *:rounded *:px-8 *:py-2 *:text-sm *:*:first:text-2xl *:font-medium *:aria-[current='page']:font-semibold *:gap-2 *:transition-all *:duration-200 *:hover:translate-x-1 *:hover:shadow-sm">
             <NavLink
               to="/new-campaign"
-              className="mb-6 bg-[#247B7B]! text-white! justify-center"
+              className="mb-6 bg-teal-600! text-white! justify-center hover:bg-teal-700! active:scale-95"
             >
               <Icon icon="material-symbols:add" />
               <span>New Campaign</span>
@@ -62,9 +104,9 @@ export default function AppLayout() {
           <div className="bg-white rounded text-center px-10 py-7 my-auto">
             <Icon
               icon="material-symbols:help-outline"
-              className="text-2xl inline-block text-[#247B7B]"
+              className="text-2xl inline-block text-teal-600"
             />
-            <p className="text-sm bg-clip-text text-transparent bg-linear-to-r from-[#247B7B] to-[#3B247B] font-semibold py-1">
+            <p className="text-sm bg-clip-text text-transparent bg-linear-to-r from-teal-600 to-purple-700 font-semibold py-1">
               Need help?
             </p>
             <p className="font-medium text-xs">
@@ -81,35 +123,60 @@ export default function AppLayout() {
         </div>
       </aside>
       <main className="grow overflow-auto flex flex-col">
-        <header className="border-b border-b-[#F3F3F3]">
+        <header className="border-b border-b-gray-200">
           <div className="h-20 flex items-center justify-between px-5 container">
-            <InputGroup className="max-w-72">
-              <InputGroupInput type="search" placeholder="Search" />
-              <InputGroupAddon>
-                <Icon icon="material-symbols:search" />
-              </InputGroupAddon>
-            </InputGroup>
+            <div ref={searchContainerRef} className="relative w-full max-w-72">
+              <InputGroup>
+                <InputGroupInput
+                  type="search"
+                  placeholder="Search for anything..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={handleSearchKeyDown}
+                  onFocus={() => setShowResults(true)}
+                />
+                <InputGroupAddon>
+                  <Icon icon="material-symbols:search" />
+                </InputGroupAddon>
+              </InputGroup>
+              {showResults && (
+                <SearchResults
+                  results={results}
+                  isLoading={isLoading}
+                  hasQuery={hasQuery}
+                  onSelect={handleSelect}
+                  selectedIndex={selectedIndex}
+                  totalCount={totalCount}
+                  page={page}
+                  pageSize={pageSize}
+                  onPageChange={setPage}
+                />
+              )}
+            </div>
             <div className="flex items-center gap-2">
-              <button type="button">
+              <button
+                type="button"
+                className="transition-all duration-200 hover:scale-110 active:scale-95"
+              >
                 <Icon icon="ic:outline-notifications" className="text-2xl" />
               </button>
               <div className="flex items-center gap-3">
-                <hr className="self-stretch border-t-0 border-r border-[#F0F4F4] mr-1 h-auto my-0.5" />
-                <Avatar className="size-9">
+                <hr className="self-stretch border-t-0 border-r border-gray-100 mr-1 h-auto my-0.5" />
+                <Avatar>
                   <AvatarImage
-                    src="https://github.com/shadcn.png"
-                    alt="@shadcn"
+                    src="https://github.com/purrrplelipton.png"
+                    alt="@purrrplelipton"
                   />
                   <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
                 <button
                   type="button"
-                  className="flex items-center gap-2 text-sm"
+                  className="flex items-center gap-2 text-sm transition-all duration-200 hover:text-teal-600"
                 >
-                  <span>BigTech</span>
+                  <span>purrrplelipton</span>
                   <Icon
                     icon="mdi:chevron-down"
-                    className="text-2xl text-[#247B7B]"
+                    className="text-2xl text-teal-600"
                   />
                 </button>
               </div>

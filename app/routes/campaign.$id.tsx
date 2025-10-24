@@ -83,7 +83,7 @@ export default function CampaignDetail() {
       <div className="flex items-center justify-center h-full">
         <Icon
           icon="svg-spinners:ring-resize"
-          className="text-4xl text-[#247B7B]"
+          className="text-4xl text-teal-600"
         />
       </div>
     );
@@ -111,7 +111,7 @@ export default function CampaignDetail() {
 
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-semibold text-[#247B7B]">
+        <h1 className="text-xl font-semibold text-teal-600">
           Campaign Information
         </h1>
         <div className="flex items-center gap-3">
@@ -176,11 +176,11 @@ export default function CampaignDetail() {
         {/* Linked Keywords */}
         <div className="space-y-1">
           <Label>Linked Keywords</Label>
-          <div className="min-h-24 px-2.5 py-2.25 border rounded border-[#999999] shadow-xs flex items-start flex-wrap gap-2">
+          <div className="min-h-24 px-2.5 py-2.25 border rounded border-gray-400 shadow-xs flex items-start flex-wrap gap-2">
             {campaign.linkedKeywords.map((keyword) => (
               <span
                 key={keyword}
-                className="inline-flex items-center gap-1 bg-[#247B7B] text-white pl-2 py-0.75 pr-1.25 rounded-full text-xs"
+                className="inline-flex items-center gap-1 bg-teal-600 text-white pl-2 py-0.75 pr-1.25 rounded-full text-xs"
               >
                 <span>{keyword}</span>
                 <Icon icon="material-symbols:close" />
@@ -277,7 +277,7 @@ export default function CampaignDetail() {
       >
         <DialogContent className="sm:max-w-md" aria-describedby={undefined}>
           <DialogHeader className="items-center space-y-4">
-            <div className="w-16 h-16 rounded-full bg-[#247B7B] flex items-center justify-center">
+            <div className="w-16 h-16 rounded-full bg-teal-600 flex items-center justify-center">
               <Icon
                 icon="material-symbols:check"
                 className="text-4xl text-white"

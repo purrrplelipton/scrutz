@@ -16,13 +16,16 @@ pre-commit:
 
 # Pre-push hooks - run before pushing to remote
 pre-push:
-  parallel: true
+  parallel: false
   jobs:
     - name: Lint entire codebase
       run: pnpm biome check --write
 
     - name: Type check all files
       run: pnpm tsc --noEmit
+
+    - name: Build project
+      run: pnpm build
 
     - name: Check for console logs
       glob: "*.{ts,tsx}"

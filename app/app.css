@@ -107,8 +107,6 @@
 }
 
 @theme {
-  --color-background: #fffffa;
-  --color-foreground: #000005;
   --font-general-sans: "General Sans", system-ui, sans-serif;
   --font-inter: "Inter", sans-serif;
   --font-nunito: "Nunito", sans-serif;
@@ -130,8 +128,8 @@
 
 :root {
   height: 100%;
-  background-color: var(--color-background);
-  color: var(--color-foreground);
+  background-color: white;
+  color: var(--color-gray-900);
 }
 
 body {

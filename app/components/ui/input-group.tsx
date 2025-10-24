@@ -10,18 +10,13 @@ function InputGroup({ className, ...props }: ComponentProps<"fieldset">) {
     <fieldset
       data-slot="input-group"
       className={cn(
-        "group/input-group border-[#999999] relative flex w-full items-center rounded border shadow-xs transition-[color,box-shadow] outline-none",
+        "group/input-group border-gray-400 relative flex w-full items-center rounded border shadow-xs transition-[color,box-shadow] outline-none",
         "min-w-0 has-[>textarea]:h-auto",
-
-        // Variants based on alignment.
         "has-[>[data-align=inline-start]]:[&>input]:pl-2.5",
         "has-[>[data-align=inline-end]]:[&>input]:pr-2.5",
         "has-[>[data-align=block-start]]:flex-col has-[>[data-align=block-start]]:[&>input]:pb-2.25",
         "has-[>[data-align=block-end]]:flex-col has-[>[data-align=block-end]]:[&>input]:pt-2.25",
-
-        // Error state.
         "has-[[data-slot][aria-invalid=true]]:ring-red-600/20 has-[[data-slot][aria-invalid=true]]:border-red-600",
-
         className
       )}
       {...props}
@@ -30,7 +25,7 @@ function InputGroup({ className, ...props }: ComponentProps<"fieldset">) {
 }
 
 const inputGroupAddonVariants = cva(
-  "text-foreground/50 flex h-auto cursor-text items-center justify-center gap-2 py-1.5 text-sm font-medium select-none [&>svg:not([class*='size-'])]:size-4 [&>kbd]:rounded-[calc(var(--radius)-5px)] group-data-[disabled=true]/input-group:opacity-50",
+  "text-gray-500 flex h-auto cursor-text items-center justify-center gap-2 py-1.5 text-sm font-medium select-none [&>svg:not([class*='size-'])]:size-4 [&>kbd]:rounded-[calc(var(--radius)-5px)] group-data-[disabled=true]/input-group:opacity-50",
   {
     variants: {
       align: {
@@ -125,7 +120,7 @@ function InputGroupText({ className, ...props }: ComponentProps<"span">) {
   return (
     <span
       className={cn(
-        "text-muted-foreground flex items-center gap-2 text-sm [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4",
+        "text-gray-500 flex items-center gap-2 text-sm [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4",
         className
       )}
       {...props}

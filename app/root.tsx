@@ -14,6 +14,17 @@ import { Toaster } from "sonner";
 import type { Route } from "./+types/root";
 import "./app.css";
 
+export const meta: Route.MetaFunction = () => {
+  return [
+    { title: "Scrutz - Campaign Management Platform" },
+    {
+      name: "description",
+      content:
+        "Manage your campaigns, track performance, and analyze market intelligence with Scrutz.",
+    },
+  ];
+};
+
 export const links: Route.LinksFunction = () => [
   { rel: "icon", href: "/scrutz.icon.svg", type: "image/svg+xml" },
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -52,17 +63,12 @@ export default function App() {
       new QueryClient({
         defaultOptions: {
           queries: {
-            // Stale time: 5 minutes - data is considered fresh for this duration
             staleTime: 1000 * 60 * 5,
-            // Cache time: 10 minutes - inactive data stays in cache
             gcTime: 1000 * 60 * 10,
-            // Retry failed requests 1 time before throwing error
             retry: 1,
-            // Refetch on window focus
             refetchOnWindowFocus: false,
           },
           mutations: {
-            // Retry failed mutations once
             retry: 1,
           },
         },
@@ -83,8 +89,8 @@ export default function App() {
             toast: "border shadow-lg rounded-lg",
             title: "font-semibold",
             description: "text-sm opacity-90",
-            actionButton: "bg-[#247B7B] text-white hover:bg-[#1e6363]",
-            cancelButton: "bg-gray-100 hover:bg-gray-200",
+            actionButton: "bg-teal-600 text-white",
+            cancelButton: "bg-gray-100",
           },
         }}
       />
