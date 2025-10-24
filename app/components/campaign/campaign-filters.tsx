@@ -45,14 +45,14 @@ export function CampaignFilters({
   return (
     <header className="mb-6">
       <p className="font-semibold text-xl text-teal-600 mb-4">All Campaigns</p>
-      <div className="flex flex-col lg:flex-row lg:items-center">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
         <fieldset className="flex items-center gap-2">
           <legend className="sr-only">Filter campaigns by status</legend>
           {(["All", "Inactive", "Active"] as const).map((status) => (
             <label
               key={status}
               className={cn(
-                "px-2.5 py-2.25 rounded border border-current text-sm font-medium cursor-pointer transition-all duration-200 hover:shadow-sm active:scale-95",
+                "px-1.75 py-0.75 lg:p-2.25 rounded border border-current text-[0.625rem] lg:text-sm font-medium transition-all duration-200 hover:shadow-sm active:scale-95",
                 activeTab === status
                   ? "text-teal-600 bg-teal-50 shadow-sm"
                   : "text-gray-400 hover:text-gray-600 hover:border-gray-500"
@@ -77,7 +77,7 @@ export function CampaignFilters({
           ))}
         </fieldset>
 
-        <div className="lg:grow lg:justify-end flex flex-col lg:flex-row lg:items-center gap-4">
+        <div className="lg:grow flex items-center gap-2 lg:gap-4">
           <InputGroup className="min-w-0 w-full max-w-60">
             <InputGroupInput
               id={searchId}

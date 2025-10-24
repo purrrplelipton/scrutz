@@ -1,7 +1,7 @@
 import { Icon } from "@iconify-icon/react";
 import { useClickAway } from "@uidotdev/usehooks";
-import { useState } from "react";
-import { Link, NavLink, Outlet, useNavigate } from "react-router";
+import { useEffect, useState } from "react";
+import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router";
 import { ScrutzIcon, ScrutzText } from "~/assets/svgs";
 import { SearchResults } from "~/components/search-results";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
@@ -12,13 +12,22 @@ import {
   InputGroupInput,
 } from "~/components/ui/input-group";
 import { useSearch } from "~/lib/hooks/use-search";
+import { cn } from "~/lib/utils";
 
 export default function AppLayout() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [showResults, setShowResults] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const searchContainerRef = useClickAway<HTMLDivElement>(() => {
     setShowResults(false);
   });
+
+  // Close sidebar on route change
+  // biome-ignore lint/correctness/useExhaustiveDependencies: We specifically want to react to pathname changes
+  useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [location.pathname]);
 
   const {
     searchQuery,
@@ -54,17 +63,45 @@ export default function AppLayout() {
 
   return (
     <>
-      <aside className="grow overflow-auto w-1/5 max-w-2xs bg-gray-100 flex flex-col">
+      {/* Mobile overlay */}
+      {isSidebarOpen && (
+        <button
+          type="button"
+          className="md:hidden fixed inset-0 bg-black/50 z-40 appearance-none"
+          onClick={() => setIsSidebarOpen(false)}
+          aria-label="Close sidebar"
+        />
+      )}
+
+      {/* Sidebar */}
+      <aside
+        className={cn(
+          "fixed overflow-auto md:static inset-y-0 left-0 z-50 w-4/5 max-w-2xs bg-gray-100 flex flex-col transition-all duration-300",
+          {
+            "-translate-x-full invisible md:translate-x-0 md:visible":
+              !isSidebarOpen,
+          }
+        )}
+      >
         <header className="px-5">
-          <div className="flex items-center h-20">
+          <div className="flex items-center justify-between h-20">
             <Link to="/" className="flex items-center gap-4">
               <ScrutzIcon className="hidden lg:block text-5xl w-[1em]" />
               <ScrutzText className="text-[6.5rem] w-[1em]" />
             </Link>
+            <Button
+              variant="ghost"
+              type="button"
+              onClick={() => setIsSidebarOpen(false)}
+              aria-label="Close menu"
+              className="md:hidden! text-xl rounded-full"
+            >
+              <Icon icon="material-symbols:close" />
+            </Button>
           </div>
         </header>
         <div className="p-5 grow overflow-auto flex flex-col">
-          <nav className="flex flex-col items-stretch gap-4 *:flex *:items-center *:aria-[current='page']:text-teal-600 *:aria-[current='page']:bg-white *:rounded *:px-8 *:py-2 *:text-sm *:*:first:text-2xl *:font-medium *:aria-[current='page']:font-semibold *:gap-2 *:transition-all *:duration-200 *:hover:translate-x-1 *:hover:shadow-sm">
+          <nav className="flex mb-4 flex-col items-stretch gap-4 *:flex *:items-center *:aria-[current='page']:text-teal-600 *:aria-[current='page']:bg-white *:rounded *:px-8 *:py-2 *:text-sm *:*:first:text-2xl *:font-medium *:aria-[current='page']:font-semibold *:gap-2 *:transition-all *:duration-200 *:hover:translate-x-1 *:hover:shadow-sm">
             <NavLink
               to="/new-campaign"
               className="mb-6 bg-teal-600! text-white! justify-center hover:bg-teal-700! active:scale-95"
@@ -124,7 +161,19 @@ export default function AppLayout() {
       </aside>
       <main className="grow overflow-auto flex flex-col">
         <header className="border-b border-b-gray-200">
-          <div className="h-20 flex items-center justify-between px-5 container">
+          <div className="h-20 flex items-center justify-between gap-4 px-5 container">
+            {/* Mobile menu button */}
+            <Button
+              variant="ghost"
+              type="button"
+              onClick={() => setIsSidebarOpen(true)}
+              aria-label="Open menu"
+              className="text-xl md:hidden! rounded-full"
+            >
+              <Icon icon="material-symbols:menu" />
+            </Button>
+
+            {/* Search */}
             <div ref={searchContainerRef} className="relative w-full max-w-72">
               <InputGroup>
                 <InputGroupInput
@@ -160,7 +209,7 @@ export default function AppLayout() {
               >
                 <Icon icon="ic:outline-notifications" className="text-2xl" />
               </button>
-              <div className="flex items-center gap-3">
+              <button type="button" className="group flex items-center gap-3">
                 <hr className="self-stretch border-t-0 border-r border-gray-100 mr-1 h-auto my-0.5" />
                 <Avatar>
                   <AvatarImage
@@ -169,17 +218,14 @@ export default function AppLayout() {
                   />
                   <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
-                <button
-                  type="button"
-                  className="flex items-center gap-2 text-sm transition-all duration-200 hover:text-teal-600"
-                >
+                <div className="hidden md:flex items-center gap-2 text-xs lg:text-sm transition-all duration-200 group-hover:text-teal-600">
                   <span>purrrplelipton</span>
                   <Icon
                     icon="mdi:chevron-down"
                     className="text-2xl text-teal-600"
                   />
-                </button>
-              </div>
+                </div>
+              </button>
             </div>
           </div>
         </header>

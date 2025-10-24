@@ -43,7 +43,7 @@ function PaginationButton({
       data-slot="pagination-button"
       data-active={isActive}
       className={cn(
-        "rounded-full h-6 min-w-6 content-center text-center inline-block transition-all duration-200 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed",
+        "rounded-full h-6 min-w-6 content-center text-center inline-block transition-all duration-200 hover:scale-110 disabled:opacity-50",
         {
           "text-white bg-teal-600 font-bold shadow-md": isActive,
           "hover:bg-gray-100": !isActive,
