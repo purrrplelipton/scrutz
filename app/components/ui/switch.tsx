@@ -8,7 +8,7 @@ function Switch({ className, ...props }: ComponentProps<typeof Root>) {
     <Root
       data-slot="switch"
       className={cn(
-        "peer data-[state=checked]:bg-purple-700 data-[state=unchecked]:bg-gray-400 inline-flex h-[1.15rem] w-8 shrink-0 items-center rounded-full border border-transparent shadow-xs transition-all duration-200 outline-none disabled:cursor-not-allowed disabled:opacity-50 hover:shadow-md active:scale-95",
+        "peer data-[state=checked]:bg-fuchsia-700 data-[state=unchecked]:bg-gray-400 inline-flex h-[1.15rem] w-8 shrink-0 items-center rounded-full border border-transparent shadow-xs transition-all duration-200 outline-none disabled:opacity-50 hover:shadow-md active:scale-95",
         className
       )}
       {...props}

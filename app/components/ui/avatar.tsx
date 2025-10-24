@@ -7,7 +7,7 @@ function Avatar({ className, ...props }: ComponentProps<typeof Root>) {
     <Root
       data-slot="avatar"
       className={cn(
-        "relative flex size-9 shrink-0 overflow-hidden rounded-full transition-all duration-200 hover:scale-110 hover:shadow-lg cursor-pointer",
+        "relative flex size-9 shrink-0 overflow-hidden rounded-full transition-all duration-200 hover:scale-110 hover:shadow-lg",
         className
       )}
       {...props}

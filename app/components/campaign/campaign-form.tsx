@@ -1,5 +1,5 @@
 import { Icon } from "@iconify-icon/react";
-import { type KeyboardEvent, useEffect, useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { Controller, type UseFormReturn } from "react-hook-form";
 import { useBlocker } from "react-router";
 import { NaturalLanguageDatePicker } from "~/components/natural-language-date-picker";
@@ -13,6 +13,12 @@ import {
   DialogTitle,
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "~/components/ui/input-group";
 import { Label } from "~/components/ui/label";
 import {
   Select,
@@ -76,10 +82,13 @@ export function CampaignForm({
       (linkedKeywords && linkedKeywords.length > 0)
   );
 
+  // Determine if user has unsaved changes based on context
+  const hasUnsavedChanges = showDirtyCheck ? isDirty : hasFormData;
+
   // Prevent browser navigation (back/forward/refresh) when there's unsaved data
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (hasFormData) {
+      if (hasUnsavedChanges) {
         e.preventDefault();
         // Chrome requires returnValue to be set
         e.returnValue = "";
@@ -91,12 +100,12 @@ export function CampaignForm({
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [hasFormData]);
+  }, [hasUnsavedChanges]);
 
   // Block React Router navigation when there's unsaved data
   const blocker = useBlocker(
     ({ currentLocation, nextLocation }) =>
-      hasFormData && currentLocation.pathname !== nextLocation.pathname
+      hasUnsavedChanges && currentLocation.pathname !== nextLocation.pathname
   );
 
   // Sync blocker state with dialog state
@@ -143,7 +152,7 @@ export function CampaignForm({
   );
 
   const handleCancelClick = () => {
-    if (hasFormData) {
+    if (hasUnsavedChanges) {
       setShowExitDialog(true);
     } else {
       onCancel();
@@ -171,10 +180,9 @@ export function CampaignForm({
     }
   };
 
-  const handleKeywordKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && linkedKeyword.trim()) {
-      e.preventDefault();
-      const currentKeywords = form.watch("linkedKeywords") || [];
+  const addKeyword = () => {
+    if (linkedKeyword.trim()) {
+      const currentKeywords = watch("linkedKeywords") || [];
       setValue("linkedKeywords", [...currentKeywords, linkedKeyword.trim()]);
       setLinkedKeyword("");
       clearErrors("linkedKeywords");
@@ -182,7 +190,7 @@ export function CampaignForm({
   };
 
   const removeKeyword = (index: number) => {
-    const currentKeywords = form.watch("linkedKeywords") || [];
+    const currentKeywords = watch("linkedKeywords") || [];
     const newKeywords = currentKeywords.filter((_, i) => i !== index);
     setValue("linkedKeywords", newKeywords);
 
@@ -323,7 +331,7 @@ export function CampaignForm({
         </div>
 
         <div className="flex items-center justify-between py-2">
-          <Label htmlFor={dailyDigestId} className="cursor-pointer">
+          <Label htmlFor={dailyDigestId}>
             Want to receive daily digest about the campaign?
           </Label>
           <Controller
@@ -361,14 +369,24 @@ export function CampaignForm({
               ))}
             </div>
           )}
-          <Input
-            id={keywordsId}
-            placeholder="To add keywords, type your keyword and press enter"
-            value={linkedKeyword}
-            onChange={(e) => setLinkedKeyword(e.target.value)}
-            onKeyDown={handleKeywordKeyDown}
-            aria-invalid={errors.linkedKeywords ? "true" : "false"}
-          />
+          <InputGroup>
+            <InputGroupInput
+              id={keywordsId}
+              placeholder="Enter a keyword"
+              value={linkedKeyword}
+              onChange={(e) => setLinkedKeyword(e.target.value)}
+              aria-invalid={errors.linkedKeywords ? "true" : "false"}
+            />
+            <InputGroupAddon align="inline-end">
+              <InputGroupButton
+                onClick={addKeyword}
+                disabled={!linkedKeyword.trim()}
+                className="py-0.5"
+              >
+                Add
+              </InputGroupButton>
+            </InputGroupAddon>
+          </InputGroup>
           {errors.linkedKeywords && (
             <p className="text-xs text-red-600">
               {errors.linkedKeywords.message}

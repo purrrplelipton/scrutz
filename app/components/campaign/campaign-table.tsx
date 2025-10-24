@@ -30,7 +30,7 @@ export function CampaignTable({
   return (
     <div className="grow overflow-auto">
       <table className="w-full text-gray-500">
-        <thead className="bg-gray-100 text-gray-600 font-bold text-xs rounded text-left [&_th]:px-2.5 [&_th]:py-3">
+        <thead className="bg-gray-100 text-gray-600 font-bold text-xs rounded text-left [&_th]:px-2.5 [&_th]:py-3 [&_th]:truncate">
           <tr>
             <th>S/N</th>
             <th>Campaign Name</th>
@@ -70,7 +70,7 @@ export function CampaignTable({
             campaigns.map((campaign, index) => (
               <tr
                 key={campaign.id}
-                className="transition-all duration-200 hover:bg-gray-50 hover:shadow-sm cursor-pointer"
+                className="transition-all duration-200 hover:bg-gray-50 hover:shadow-sm"
               >
                 <td>{(currentPage - 1) * pageSize + index + 1}.</td>
                 <td>{campaign.campaignName}</td>

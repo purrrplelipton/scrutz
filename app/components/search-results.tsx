@@ -73,7 +73,7 @@ export function SearchResults({
                 aria-label={`Select ${result.campaignName} campaign, ${result.campaignStatus}, starts ${format(new Date(result.startDate), "MMMM d, yyyy")}`}
               >
                 <div className="flex items-start justify-between gap-3">
-                  <div className="flex-1 min-w-0">
+                  <div className="grow min-w-0">
                     <div className="font-semibold text-sm text-gray-900 truncate">
                       {result.campaignName}
                     </div>
