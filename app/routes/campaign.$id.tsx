@@ -103,13 +103,11 @@ export default function CampaignDetail() {
 
   return (
     <div className="max-w-2xl mx-auto w-full">
-      {/* Back Button */}
       <Link to="/campaign" className="inline-flex items-center gap-2 mb-6">
         <Icon icon="material-symbols:arrow-back" className="text-xl" />
         <span>Back</span>
       </Link>
 
-      {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-xl font-semibold text-teal-600">
           Campaign Information
@@ -134,15 +132,12 @@ export default function CampaignDetail() {
         </div>
       </div>
 
-      {/* Form Content */}
       <div className="space-y-6">
-        {/* Campaign Name */}
         <div className="space-y-1">
           <Label htmlFor={campaignNameId}>Campaign Name</Label>
           <Input id={campaignNameId} value={campaign.campaignName} readOnly />
         </div>
 
-        {/* Campaign Description */}
         <div className="space-y-1">
           <Label htmlFor={campaignDescriptionId}>Campaign Description</Label>
           <Textarea
@@ -153,7 +148,6 @@ export default function CampaignDetail() {
           />
         </div>
 
-        {/* Start Date and End Date */}
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1">
             <Label htmlFor={startDateId}>Start Date</Label>
@@ -173,7 +167,6 @@ export default function CampaignDetail() {
           </div>
         </div>
 
-        {/* Linked Keywords */}
         <div className="space-y-1">
           <Label>Linked Keywords</Label>
           <div className="min-h-24 px-2.5 py-2.25 border rounded border-gray-400 shadow-xs flex items-start flex-wrap gap-2">
@@ -189,7 +182,6 @@ export default function CampaignDetail() {
           </div>
         </div>
 
-        {/* Want to receive daily digest */}
         <div className="flex items-center justify-between py-2">
           <Label htmlFor={digestCampaignId}>
             Want to receive daily digest about the campaign?
@@ -202,7 +194,6 @@ export default function CampaignDetail() {
           />
         </div>
 
-        {/* Daily Digest Frequency */}
         {campaign.digestCampaign && (
           <div className="space-y-1">
             <Label htmlFor={dailyDigestId}>
@@ -221,7 +212,6 @@ export default function CampaignDetail() {
           </div>
         )}
 
-        {/* Action Buttons */}
         <div className="grid grid-cols-2 gap-4 pt-4">
           <Button variant="destructive" onClick={handleStopCampaign}>
             Stop Campaign
@@ -235,7 +225,6 @@ export default function CampaignDetail() {
         </div>
       </div>
 
-      {/* Stop Campaign Confirmation Dialog */}
       <Dialog open={stopDialogOpen} onOpenChange={setStopDialogOpen}>
         <DialogContent className="sm:max-w-md" aria-describedby={undefined}>
           <DialogHeader className="space-y-3">
@@ -268,7 +257,6 @@ export default function CampaignDetail() {
         </DialogContent>
       </Dialog>
 
-      {/* Success Dialog */}
       <Dialog
         open={showSuccessDialog}
         onOpenChange={(open) => {

@@ -114,7 +114,6 @@ export function NaturalLanguageDatePicker({
           onKeyDown={handleKeyDown}
           aria-invalid={error ? "true" : "false"}
         />
-        {/* <InputGroupAddon align="inline-end"> */}
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
             <Button
@@ -136,7 +135,6 @@ export function NaturalLanguageDatePicker({
             />
           </PopoverContent>
         </Popover>
-        {/* </InputGroupAddon> */}
       </InputGroup>
       {error && <p className="text-xs text-red-600">{error}</p>}
     </div>
