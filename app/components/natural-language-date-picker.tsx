@@ -1,5 +1,3 @@
-"use client";
-
 import { Icon } from "@iconify-icon/react";
 import { parseDate } from "chrono-node";
 import { format } from "date-fns";

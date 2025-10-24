@@ -1,6 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import {
   isRouteErrorResponse,
   Links,
@@ -13,6 +12,13 @@ import { Toaster } from "sonner";
 
 import type { Route } from "./+types/root";
 import "./app.css";
+
+// Lazy load React Query Devtools only in development
+const ReactQueryDevtools = lazy(() =>
+  import("@tanstack/react-query-devtools").then((module) => ({
+    default: module.ReactQueryDevtools,
+  }))
+);
 
 export const meta: Route.MetaFunction = () => {
   return [
@@ -94,7 +100,11 @@ export default function App() {
           },
         }}
       />
-      {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
+      {import.meta.env.DEV && (
+        <Suspense fallback={null}>
+          <ReactQueryDevtools initialIsOpen={false} />
+        </Suspense>
+      )}
     </QueryClientProvider>
   );
 }

@@ -1,8 +1,15 @@
 import { Icon } from "@iconify-icon/react";
-import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import { lazy, Suspense } from "react";
 import { Link } from "react-router";
 import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/utils";
+
+// Lazy load the heavy Lottie library
+const DotLottieReact = lazy(() =>
+  import("@lottiefiles/dotlottie-react").then((module) => ({
+    default: module.DotLottieReact,
+  }))
+);
 
 export default function Overview() {
   return (
@@ -25,12 +32,23 @@ export default function Overview() {
         </div>
       </header>
       <div className={cn("grow overflow-auto", "content-center text-center")}>
-        <DotLottieReact
-          className="max-w-104 mx-auto"
-          src="/lotties/empty.lottie"
-          loop
-          autoplay
-        />
+        <Suspense
+          fallback={
+            <div className="max-w-104 mx-auto h-104 flex items-center justify-center">
+              <Icon
+                icon="svg-spinners:ring-resize"
+                className="text-4xl text-teal-600"
+              />
+            </div>
+          }
+        >
+          <DotLottieReact
+            className="max-w-104 mx-auto"
+            src="/lotties/empty.lottie"
+            loop
+            autoplay
+          />
+        </Suspense>
         <p className="font-semibold text-sm mt-11 mb-9">
           No activity yet. Create anew campaign to get started
         </p>
