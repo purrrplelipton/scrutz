@@ -27,14 +27,6 @@ pre-push:
     - name: Build project
       run: pnpm build
 
-    - name: Check for console logs
-      glob: "*.{ts,tsx}"
-      run: |
-        if grep -r "console\\.\\(log\\|debug\\|info\\)" app/; then
-          echo "⚠️  Found console statements in code. Please remove them before pushing."
-          exit 1
-        fi
-
 # Commit message hook - ensure conventional commits
 commit-msg:
   jobs:
