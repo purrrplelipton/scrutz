@@ -1,0 +1,35 @@
+# Example local lefthook configuration
+# Copy this to lefthook-local.yml to customize your hooks
+# lefthook-local.yml is gitignored and won't be committed
+
+# Example: Skip type checking on pre-commit for faster commits
+# pre-commit:
+#   jobs:
+#     - name: Type check
+#       skip: true
+
+# Example: Skip console log check on pre-push
+# pre-push:
+#   jobs:
+#     - name: Check for console logs
+#       skip: true
+
+# Example: Skip commit message validation
+# commit-msg:
+#   jobs:
+#     - name: Validate commit message
+#       skip: true
+
+# Example: Run only linting, skip everything else
+# pre-commit:
+#   exclude_tags:
+#     - typecheck
+#   jobs:
+#     - name: Type check
+#       skip: true
+
+# Example: Add custom commands
+# pre-commit:
+#   jobs:
+#     - name: Custom check
+#       run: echo "Running my custom check"
