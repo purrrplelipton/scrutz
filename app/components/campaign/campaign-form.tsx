@@ -1,6 +1,7 @@
 import { Icon } from "@iconify-icon/react";
 import { type KeyboardEvent, useEffect, useId, useState } from "react";
 import { Controller, type UseFormReturn } from "react-hook-form";
+import { useBlocker } from "react-router";
 import { NaturalLanguageDatePicker } from "~/components/natural-language-date-picker";
 import { Button } from "~/components/ui/button";
 import {
@@ -67,12 +68,6 @@ export function CampaignForm({
   const [showExitDialog, setShowExitDialog] = useState(false);
   const [linkedKeyword, setLinkedKeyword] = useState("");
 
-  useEffect(() => {
-    if (endDate && startDate) {
-      trigger("endDate");
-    }
-  }, [startDate, endDate, trigger]);
-
   const hasFormData = Boolean(
     campaignName ||
       campaignDescription ||
@@ -80,6 +75,42 @@ export function CampaignForm({
       endDate ||
       (linkedKeywords && linkedKeywords.length > 0)
   );
+
+  // Prevent browser navigation (back/forward/refresh) when there's unsaved data
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (hasFormData) {
+        e.preventDefault();
+        // Chrome requires returnValue to be set
+        e.returnValue = "";
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [hasFormData]);
+
+  // Block React Router navigation when there's unsaved data
+  const blocker = useBlocker(
+    ({ currentLocation, nextLocation }) =>
+      hasFormData && currentLocation.pathname !== nextLocation.pathname
+  );
+
+  // Sync blocker state with dialog state
+  useEffect(() => {
+    if (blocker.state === "blocked") {
+      setShowExitDialog(true);
+    }
+  }, [blocker.state]);
+
+  useEffect(() => {
+    if (endDate && startDate) {
+      trigger("endDate");
+    }
+  }, [startDate, endDate, trigger]);
 
   const validateDates = () => {
     if (!startDate || !endDate) return false;
@@ -119,9 +150,25 @@ export function CampaignForm({
     }
   };
 
-  const confirmCancel = () => {
+  const handleConfirmExit = () => {
     setShowExitDialog(false);
-    onCancel();
+
+    if (blocker.state === "blocked") {
+      // If navigation was blocked, proceed with it
+      blocker.proceed();
+    } else {
+      // Otherwise it was the cancel button
+      onCancel();
+    }
+  };
+
+  const handleCancelExit = () => {
+    setShowExitDialog(false);
+
+    // If navigation was blocked, reset it
+    if (blocker.state === "blocked") {
+      blocker.reset();
+    }
   };
 
   const handleKeywordKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -149,7 +196,7 @@ export function CampaignForm({
 
   return (
     <>
-      <Dialog open={showExitDialog} onOpenChange={setShowExitDialog}>
+      <Dialog open={showExitDialog} onOpenChange={handleCancelExit}>
         <DialogContent className="sm:max-w-md" aria-describedby={undefined}>
           <DialogHeader className="space-y-3">
             <DialogTitle className="text-center text-xl">
@@ -161,15 +208,16 @@ export function CampaignForm({
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="grid grid-cols-2 gap-4">
-            <Button variant="outline" onClick={() => setShowExitDialog(false)}>
+            <Button variant="outline" onClick={handleCancelExit}>
               Continue Editing
             </Button>
-            <Button onClick={confirmCancel} variant="destructive">
+            <Button onClick={handleConfirmExit} variant="destructive">
               Discard Changes
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="space-y-1">
           <Label htmlFor={campaignNameId}>Campaign Name</Label>
