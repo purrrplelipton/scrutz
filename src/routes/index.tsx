@@ -55,7 +55,7 @@ function Home() {
           />
         </Suspense>
         <p className="mt-11 mb-9 font-semibold text-sm">
-          No activity yet. Create anew campaign to get started
+          No activity yet. Create a new campaign to get started
         </p>
         <Link to="/campaigns/new">
           <Button type="button" className="gap-2.5 px-8.25">
