@@ -1,0 +1,30 @@
+# Git commit template to help with conventional commits
+# To use: git config commit.template .gitmessage
+
+# <type>(<scope>): <subject>
+#
+# <body>
+#
+# <footer>
+
+# Types:
+# feat:     A new feature
+# fix:      A bug fix
+# docs:     Documentation only changes
+# style:    Changes that don't affect code meaning (formatting, etc)
+# refactor: Code change that neither fixes a bug nor adds a feature
+# perf:     Code change that improves performance
+# test:     Adding missing tests or correcting existing tests
+# chore:    Changes to build process or auxiliary tools
+# ci:       Changes to CI configuration files and scripts
+# build:    Changes that affect the build system or dependencies
+# revert:   Reverts a previous commit
+
+# Example:
+# feat(animations): add scroll animations to hero section
+#
+# - Implemented useInView hook for scroll detection
+# - Added staggered animations to all sections
+# - Integrated with existing magnetic effect
+#
+# Closes #123
