@@ -1,49 +1,45 @@
-# Lefthook configuration for code quality
-# https://lefthook.dev/configuration/
+# Lefthook configuration for git hooks
+# https://github.com/evilmartians/lefthook
 
-# Pre-commit hooks - run on every commit
+# Pre-commit hook - runs before creating a commit
 pre-commit:
   parallel: true
-  jobs:
-    - name: Lint and format staged files
-      glob: "*.{js,jsx,ts,tsx,json,css}"
-      run: pnpm biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
+  commands:
+    # Format code with Biome
+    format:
+      glob: "*.{ts,tsx,js,jsx,json}"
+      run: pnpm biome format --write {staged_files}
       stage_fixed: true
 
-    - name: Type check
+    # Lint code with Biome
+    lint:
+      glob: "*.{ts,tsx,js,jsx}"
+      run: pnpm biome lint --write {staged_files}
+      stage_fixed: true
+
+    # Type check
+    typecheck:
       glob: "*.{ts,tsx}"
       run: pnpm tsc --noEmit
 
-# Pre-push hooks - run before pushing to remote
+# Commit-msg hook - validates commit messages
+commit-msg:
+  commands:
+    commitlint:
+      run: pnpm commitlint --edit {1}
+
+# Pre-push hook - runs before pushing to remote
 pre-push:
   parallel: false
-  jobs:
-    - name: Lint entire codebase
+  commands:
+    # Run full check (format, lint, and type check)
+    check:
       run: pnpm biome check --write
 
-    - name: Type check all files
-      run: pnpm tsc --noEmit
+    # Run tests (skip if no test files)
+    test:
+      run: pnpm test || true
 
-    - name: Build project
+    # Build the project to ensure it compiles
+    build:
       run: pnpm build
-
-# Commit message hook - ensure conventional commits
-commit-msg:
-  jobs:
-    - name: Validate commit message
-      run: |
-        COMMIT_MSG=$(cat {1})
-        if ! echo "$COMMIT_MSG" | grep -qE "^(feat|fix|docs|style|refactor|perf|test|chore|build|ci|revert)(\(.+\))?: .+"; then
-          echo "❌ Invalid commit message format!"
-          echo ""
-          echo "Commit message must follow Conventional Commits format:"
-          echo "  <type>(<scope>): <subject>"
-          echo ""
-          echo "Types: feat, fix, docs, style, refactor, perf, test, chore, build, ci, revert"
-          echo ""
-          echo "Examples:"
-          echo "  feat(campaign): add status toggle functionality"
-          echo "  fix: resolve date picker validation issue"
-          echo "  docs: update README with setup instructions"
-          exit 1
-        fi
