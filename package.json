@@ -6,6 +6,7 @@
     "dev": "NODE_ENV=development vite dev",
     "build": "NODE_ENV=production vite build",
     "start": "PORT=5848 node .output/server/index.mjs",
+    "heroku-postbuild": "pnpm build",
     "test": "vitest run",
     "typecheck": "tsc",
     "lint": "biome lint .",
