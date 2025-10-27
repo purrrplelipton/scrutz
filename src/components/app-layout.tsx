@@ -181,7 +181,7 @@ export default function AppLayout({ children }: PropsWithChildren) {
               <InputGroup>
                 <InputGroupInput
                   type="search"
-                  placeholder="Search for anything."
+                  placeholder="Search for anything"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={handleSearchKeyDown}
