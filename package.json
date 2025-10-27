@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "NODE_ENV=development vite dev",
     "build": "NODE_ENV=production vite build",
-    "serve": "pnpm build && PORT=5848 node .output/server/index.mjs",
+    "start": "PORT=5848 node .output/server/index.mjs",
     "test": "vitest run",
     "typecheck": "tsc",
     "lint": "biome lint .",
