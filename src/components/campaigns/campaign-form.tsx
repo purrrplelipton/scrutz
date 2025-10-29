@@ -37,6 +37,7 @@ interface CampaignFormProps {
   onCancel: () => unknown;
   submitButtonText?: string;
   showDirtyCheck?: boolean;
+  initialStartDate?: string; // Original start date for edit mode
 }
 
 export function CampaignForm({
@@ -45,6 +46,7 @@ export function CampaignForm({
   onCancel,
   submitButtonText = "Submit",
   showDirtyCheck = false,
+  initialStartDate,
 }: CampaignFormProps) {
   const campaignNameId = useId();
   const campaignDescriptionId = useId();
@@ -129,8 +131,23 @@ export function CampaignForm({
     const end = new Date(endDate);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+    start.setHours(0, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
 
-    if (start < today) return false;
+    // End date cannot be in the past
+    if (end < today) return false;
+
+    // If editing and start date hasn't changed, skip past date validation
+    if (initialStartDate) {
+      const originalDate = new Date(initialStartDate);
+      originalDate.setHours(0, 0, 0, 0);
+
+      if (start.getTime() !== originalDate.getTime() && start < today) {
+        return false; // Start date changed to a past date
+      }
+    } else if (start < today) {
+      return false; // Creating new campaign with past date
+    }
 
     const oneDayAfterStart = new Date(start);
     oneDayAfterStart.setDate(oneDayAfterStart.getDate() + 1);
@@ -284,6 +301,17 @@ export function CampaignForm({
                 today.setHours(0, 0, 0, 0);
                 selectedDate.setHours(0, 0, 0, 0);
 
+                // If editing and start date hasn't changed, allow it (even if in the past)
+                if (initialStartDate) {
+                  const originalDate = new Date(initialStartDate);
+                  originalDate.setHours(0, 0, 0, 0);
+
+                  if (selectedDate.getTime() === originalDate.getTime()) {
+                    return true; // Allow unchanged start date
+                  }
+                }
+
+                // Only validate against today if creating new or changing the date
                 if (selectedDate < today) {
                   return "Start date cannot be in the past";
                 }
@@ -309,6 +337,15 @@ export function CampaignForm({
                 if (!value || !startDate) return true;
                 const start = new Date(startDate);
                 const end = new Date(value);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                end.setHours(0, 0, 0, 0);
+                start.setHours(0, 0, 0, 0);
+
+                // End date cannot be in the past
+                if (end < today) {
+                  return "End date cannot be in the past";
+                }
 
                 const oneDayAfterStart = new Date(start);
                 oneDayAfterStart.setDate(oneDayAfterStart.getDate() + 1);

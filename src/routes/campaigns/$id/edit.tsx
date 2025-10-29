@@ -1,12 +1,17 @@
 import { Icon } from "@iconify-icon/react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { lazy, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import AppLayout from "~/components/app-layout";
-import { CampaignForm } from "~/components/campaigns/campaign-form";
 import { Button } from "~/components/ui/button";
 import { useCampaign, useUpdateCampaign } from "~/lib/hooks/use-campaigns";
 import type { UpdateCampaignDto } from "~/types";
+
+const CampaignForm = lazy(() =>
+  import("~/components/campaigns/campaign-form").then((module) => ({
+    default: module.CampaignForm,
+  }))
+);
 
 export const Route = createFileRoute("/campaigns/$id/edit")({
   component: EditCampaign,
@@ -103,27 +108,30 @@ function EditCampaign() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-2xl">
-      <Link
-        to="/campaigns/$id"
-        params={{ id }}
-        className="mb-6 inline-flex items-center gap-2"
-      >
-        <Icon icon="material-symbols:arrow-back" className="text-xl" />
-        <span>Back</span>
-      </Link>
+    <AppLayout>
+      <div className="mx-auto w-full max-w-2xl">
+        <Link
+          to="/campaigns/$id"
+          params={{ id }}
+          className="mb-6 inline-flex items-center gap-2"
+        >
+          <Icon icon="material-symbols:arrow-back" className="text-xl" />
+          <span>Back</span>
+        </Link>
 
-      <h1 className="mb-7 font-semibold text-teal-600 text-xl">
-        Edit Campaign
-      </h1>
+        <h1 className="mb-7 font-semibold text-teal-600 text-xl">
+          Edit Campaign
+        </h1>
 
-      <CampaignForm
-        form={form}
-        onSubmit={onSubmit}
-        onCancel={handleCancel}
-        submitButtonText="Save Changes"
-        showDirtyCheck={true}
-      />
-    </div>
+        <CampaignForm
+          form={form}
+          onSubmit={onSubmit}
+          onCancel={handleCancel}
+          submitButtonText="Save Changes"
+          showDirtyCheck={true}
+          initialStartDate={campaign.startDate}
+        />
+      </div>
+    </AppLayout>
   );
 }

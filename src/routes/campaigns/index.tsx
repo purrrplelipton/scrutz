@@ -1,3 +1,4 @@
+import { Icon } from "@iconify-icon/react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import lodash from "lodash";
@@ -52,13 +53,26 @@ function Campaigns() {
     name: string;
   } | null>(null);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
 
-  const { data, isLoading, isError } = useCampaigns({
-    page: currentPage,
-    pageSize: 10,
-    search: searchQuery,
-    status: activeTab === "All" ? undefined : activeTab,
-  });
+  const { data, isLoading, isError, dataUpdatedAt } = useCampaigns(
+    {
+      page: currentPage,
+      pageSize: 10,
+      search: searchQuery,
+      status: activeTab === "All" ? undefined : activeTab,
+    },
+    {
+      enableRealtime: true,
+      refetchInterval: 30000, // Poll every 30 seconds
+    }
+  );
+
+  useEffect(() => {
+    if (dataUpdatedAt) {
+      setLastUpdated(new Date(dataUpdatedAt));
+    }
+  }, [dataUpdatedAt]);
 
   const deleteCampaign = useDeleteCampaign();
 
@@ -138,6 +152,19 @@ function Campaigns() {
 
   return (
     <AppLayout>
+      <div className="mb-4 flex items-center justify-between">
+        <div className="flex items-center gap-2 text-gray-500 text-sm">
+          <Icon
+            icon="mdi:circle"
+            className="animate-pulse text-green-500 text-xs"
+          />
+          <span>Live updates enabled</span>
+        </div>
+        <div className="text-gray-400 text-xs">
+          Last updated: {lastUpdated.toLocaleTimeString()}
+        </div>
+      </div>
+
       <CampaignFilters
         activeTab={activeTab}
         onStatusChange={(status) =>

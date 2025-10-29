@@ -9,7 +9,12 @@ import type {
   UpdateCampaignDto,
 } from "~/types";
 
-export function useCampaigns(filters: CampaignFilters = {}) {
+export function useCampaigns(
+  filters: CampaignFilters = {},
+  options?: { enableRealtime?: boolean; refetchInterval?: number }
+) {
+  const { enableRealtime = false, refetchInterval = 30000 } = options || {};
+
   return useQuery({
     queryKey: queryKeys.campaigns.list(filters as Record<string, unknown>),
     queryFn: async () => {
@@ -32,6 +37,9 @@ export function useCampaigns(filters: CampaignFilters = {}) {
       return response;
     },
     placeholderData: (previousData) => previousData,
+    refetchInterval: enableRealtime ? refetchInterval : false,
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
   });
 }
 

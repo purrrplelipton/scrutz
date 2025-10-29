@@ -1,11 +1,16 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { lazy, useState } from "react";
 import { useForm } from "react-hook-form";
 import AppLayout from "~/components/app-layout";
-import { CampaignForm } from "~/components/campaigns/campaign-form";
 import { SuccessDialog } from "~/components/campaigns/success-dialog";
 import { useCreateCampaign } from "~/lib/hooks/use-campaigns";
 import type { CreateCampaignDto } from "~/types";
+
+const CampaignForm = lazy(() =>
+  import("~/components/campaigns/campaign-form").then((module) => ({
+    default: module.CampaignForm,
+  }))
+);
 
 export const Route = createFileRoute("/campaigns/new")({
   component: NewCampaign,
