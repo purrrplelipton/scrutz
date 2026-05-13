@@ -14,7 +14,7 @@ export function useSearch() {
       setDebouncedQuery(value);
       setPage(1);
     }, 300),
-    []
+    [],
   );
 
   useEffect(() => {

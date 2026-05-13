@@ -1,19 +1,15 @@
 import { Icon } from "@iconify-icon/react";
 import type { ChangeEvent } from "react";
 import { useId } from "react";
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from "~/components/ui/input-group";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "#/components/ui/input-group";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "~/components/ui/select";
-import { cn } from "~/lib/utils";
+} from "#/components/ui/select";
+import { cn } from "#/lib/utils";
 
 type CampaignStatus = "All" | "Active" | "Inactive";
 
@@ -55,7 +51,7 @@ export function CampaignFilters({
                 "rounded border border-current px-1.75 py-0.75 font-medium text-[0.625rem] transition-all duration-200 hover:shadow-sm active:scale-95 lg:p-2.25 lg:text-sm",
                 activeTab === status
                   ? "bg-teal-50 text-teal-600 shadow-sm"
-                  : "text-gray-400 hover:border-gray-500 hover:text-gray-600"
+                  : "text-gray-400 hover:border-gray-500 hover:text-gray-600",
               )}
             >
               <input
@@ -67,12 +63,7 @@ export function CampaignFilters({
                 className="sr-only"
               />
               {status} (
-              {status === "All"
-                ? allCount
-                : status === "Active"
-                  ? activeCount
-                  : inactiveCount}
-              )
+              {status === "All" ? allCount : status === "Active" ? activeCount : inactiveCount})
             </label>
           ))}
         </fieldset>

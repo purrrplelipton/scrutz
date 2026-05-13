@@ -2,8 +2,8 @@ import { Icon } from "@iconify-icon/react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { format } from "date-fns";
 import { useId, useState } from "react";
-import AppLayout from "~/components/app-layout";
-import { Button } from "~/components/ui/button";
+import AppLayout from "#/components/app-layout";
+import { Button } from "#/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -11,24 +11,20 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "~/components/ui/dialog";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
+} from "#/components/ui/dialog";
+import { Input } from "#/components/ui/input";
+import { Label } from "#/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "~/components/ui/select";
-import { Switch } from "~/components/ui/switch";
-import { Textarea } from "~/components/ui/textarea";
-import {
-  useCampaign,
-  useDeleteCampaign,
-  useToggleCampaignStatus,
-} from "~/lib/hooks/use-campaigns";
-import { cn } from "~/lib/utils";
+} from "#/components/ui/select";
+import { Switch } from "#/components/ui/switch";
+import { Textarea } from "#/components/ui/textarea";
+import { useCampaign, useDeleteCampaign, useToggleCampaignStatus } from "#/lib/hooks/use-campaigns";
+import { cn } from "#/lib/utils";
 
 export const Route = createFileRoute("/campaigns/$id/")({
   component: CampaignDetails,
@@ -86,10 +82,7 @@ function CampaignDetails() {
   if (isLoading) {
     return (
       <AppLayout>
-        <Icon
-          icon="svg-spinners:ring-resize"
-          className="m-auto text-4xl text-teal-600"
-        />
+        <Icon icon="svg-spinners:ring-resize" className="m-auto text-4xl text-teal-600" />
       </AppLayout>
     );
   }
@@ -98,17 +91,9 @@ function CampaignDetails() {
     return (
       <AppLayout>
         <div className="flex h-full flex-col items-center justify-center gap-4">
-          <Icon
-            icon="material-symbols:error"
-            className="text-4xl text-red-600"
-          />
-          <p className="text-gray-600 text-lg">
-            Failed to load campaign details
-          </p>
-          <Button
-            variant="outline"
-            onClick={() => navigate({ to: "/campaigns" })}
-          >
+          <Icon icon="material-symbols:error" className="text-4xl text-red-600" />
+          <p className="text-gray-600 text-lg">Failed to load campaign details</p>
+          <Button variant="outline" onClick={() => navigate({ to: "/campaigns" })}>
             Back to Campaigns
           </Button>
         </div>
@@ -125,9 +110,7 @@ function CampaignDetails() {
         </Link>
 
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="font-semibold text-teal-600 text-xl">
-            Campaign Information
-          </h1>
+          <h1 className="font-semibold text-teal-600 text-xl">Campaign Information</h1>
           <div className="flex items-center gap-3">
             <span className="text-gray-600 text-sm">Campaign Status</span>
             <Switch
@@ -138,9 +121,7 @@ function CampaignDetails() {
             <span
               className={cn(
                 "font-medium text-sm",
-                campaign.campaignStatus === "Active"
-                  ? "text-green-700"
-                  : "text-red-700"
+                campaign.campaignStatus === "Active" ? "text-green-700" : "text-red-700",
               )}
             >
               {campaign.campaignStatus}
@@ -169,10 +150,7 @@ function CampaignDetails() {
               <Label htmlFor={startDateId}>Start Date</Label>
               <Input
                 id={startDateId}
-                value={format(
-                  new Date(campaign.startDate),
-                  "do 'of' MMMM, yyyy"
-                )}
+                value={format(new Date(campaign.startDate), "do 'of' MMMM, yyyy")}
                 readOnly
               />
             </div>
@@ -219,7 +197,7 @@ function CampaignDetails() {
                 Kindly select the time you want to receive daily digest
               </Label>
               <Select value={campaign.dailyDigest} disabled>
-                <SelectTrigger id={dailyDigestId}>
+                <SelectTrigger id={dailyDigestId} className="w-full">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -237,9 +215,7 @@ function CampaignDetails() {
             </Button>
             <Button
               variant="outline"
-              onClick={() =>
-                navigate({ to: "/campaigns/$id/edit", params: { id } })
-              }
+              onClick={() => navigate({ to: "/campaigns/$id/edit", params: { id } })}
             >
               Edit Information
             </Button>
@@ -249,9 +225,7 @@ function CampaignDetails() {
         <Dialog open={stopDialogOpen} onOpenChange={setStopDialogOpen}>
           <DialogContent className="sm:max-w-md" aria-describedby={undefined}>
             <DialogHeader className="space-y-3">
-              <DialogTitle className="text-center text-xl">
-                Stop Campaign
-              </DialogTitle>
+              <DialogTitle className="text-center text-xl">Stop Campaign</DialogTitle>
               <DialogDescription className="text-center text-gray-600">
                 Are You sure you want to delete &ldquo;{campaign.campaignName}
                 &rdquo; campaign?
@@ -260,10 +234,7 @@ function CampaignDetails() {
               </DialogDescription>
             </DialogHeader>
             <DialogFooter className="grid grid-cols-2 gap-4">
-              <Button
-                variant="outline"
-                onClick={() => setStopDialogOpen(false)}
-              >
+              <Button variant="outline" onClick={() => setStopDialogOpen(false)}>
                 Cancel
               </Button>
               <Button
@@ -290,20 +261,14 @@ function CampaignDetails() {
           <DialogContent className="sm:max-w-md" aria-describedby={undefined}>
             <DialogHeader className="items-center space-y-4">
               <div className="flex h-16 w-16 items-center justify-center rounded-full bg-teal-600">
-                <Icon
-                  icon="material-symbols:check"
-                  className="text-4xl text-white"
-                />
+                <Icon icon="material-symbols:check" className="text-4xl text-white" />
               </div>
               <DialogTitle className="text-center text-xl">
                 Campaign Successfully Deleted!
               </DialogTitle>
             </DialogHeader>
             <DialogFooter className="sm:justify-center">
-              <Button
-                onClick={handleSuccessDialogClose}
-                className="font-bold font-syne"
-              >
+              <Button onClick={handleSuccessDialogClose} className="font-bold font-syne">
                 Go Back to campaign list
               </Button>
             </DialogFooter>

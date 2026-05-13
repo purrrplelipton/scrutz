@@ -1,29 +1,26 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { api, queryKeys } from "~/lib/api-client";
-import { toast } from "~/lib/toast";
+import { api, queryKeys } from "#/lib/api-client";
+import { toast } from "#/lib/toast";
 import type {
   Campaign,
   CampaignFilters,
   CampaignListResponse,
   CreateCampaignDto,
   UpdateCampaignDto,
-} from "~/types";
+} from "#/types";
 
 export function useCampaigns(
   filters: CampaignFilters = {},
-  options?: { enableRealtime?: boolean; refetchInterval?: number }
+  options?: { enableRealtime?: boolean; refetchInterval?: number },
 ) {
   const { enableRealtime = false, refetchInterval = 30000 } = options || {};
 
   return useQuery({
     queryKey: queryKeys.campaigns.list(filters as Record<string, unknown>),
     queryFn: async () => {
-      const response = await api.get<CampaignListResponse | Campaign[]>(
-        "/Campaign",
-        {
-          params: filters as Record<string, string | number | boolean>,
-        }
-      );
+      const response = await api.get<CampaignListResponse | Campaign[]>("/Campaign", {
+        params: filters as Record<string, string | number | boolean>,
+      });
 
       if (Array.isArray(response)) {
         return {
@@ -83,10 +80,7 @@ export function useUpdateCampaign() {
       return campaign;
     },
     onSuccess: (updatedCampaign) => {
-      queryClient.setQueryData(
-        queryKeys.campaigns.detail(updatedCampaign.id),
-        updatedCampaign
-      );
+      queryClient.setQueryData(queryKeys.campaigns.detail(updatedCampaign.id), updatedCampaign);
 
       queryClient.invalidateQueries({
         queryKey: queryKeys.campaigns.lists(),
@@ -128,13 +122,7 @@ export function useToggleCampaignStatus() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
-      id,
-      status,
-    }: {
-      id: string;
-      status: Campaign["campaignStatus"];
-    }) =>
+    mutationFn: ({ id, status }: { id: string; status: Campaign["campaignStatus"] }) =>
       api.put<Campaign>(`/CampaignStatus/${id}`, {
         id,
         campaignStatus: status === "Active",
@@ -144,9 +132,7 @@ export function useToggleCampaignStatus() {
         queryKey: queryKeys.campaigns.detail(id),
       });
 
-      const previousCampaign = queryClient.getQueryData<Campaign>(
-        queryKeys.campaigns.detail(id)
-      );
+      const previousCampaign = queryClient.getQueryData<Campaign>(queryKeys.campaigns.detail(id));
 
       if (previousCampaign) {
         queryClient.setQueryData(queryKeys.campaigns.detail(id), {
@@ -159,10 +145,7 @@ export function useToggleCampaignStatus() {
     },
     onError: (_err, { id }, context) => {
       if (context?.previousCampaign) {
-        queryClient.setQueryData(
-          queryKeys.campaigns.detail(id),
-          context.previousCampaign
-        );
+        queryClient.setQueryData(queryKeys.campaigns.detail(id), context.previousCampaign);
       }
     },
     onSettled: (_data, _error, { id }) => {

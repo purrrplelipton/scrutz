@@ -2,17 +2,14 @@ import { Icon } from "@iconify-icon/react";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { useClickAway } from "@uidotdev/usehooks";
 import { type PropsWithChildren, useEffect, useState } from "react";
-import { ScrutzIcon, ScrutzText } from "~/assets/svgs";
-import { SearchResults } from "~/components/search-results";
-import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
-import { Button } from "~/components/ui/button";
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from "~/components/ui/input-group";
-import { useSearch } from "~/lib/hooks/use-search";
-import { cn } from "~/lib/utils";
+import { default as ScrutzIcon } from "#/assets/svgs/scrutz.icon.svg?react";
+import { default as ScrutzText } from "#/assets/svgs/scrutz.text.svg?react";
+import { SearchResults } from "#/components/search-results";
+import { Avatar, AvatarFallback, AvatarImage } from "#/components/ui/avatar";
+import { Button } from "#/components/ui/button";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "#/components/ui/input-group";
+import { useSearch } from "#/lib/hooks/use-search";
+import { cn } from "#/lib/utils";
 
 export default function AppLayout({ children }: PropsWithChildren) {
   const navigate = useNavigate();
@@ -48,12 +45,14 @@ export default function AppLayout({ children }: PropsWithChildren) {
     handleKeyDown(e);
 
     if (e.key === "Enter" && results.length > 0) {
-      navigate({
-        to: "/campaigns/$id",
-        params: { id: results[selectedIndex].id },
-      });
-      resetSearch();
-      setShowResults(false);
+      if (results[selectedIndex]?.id) {
+        navigate({
+          to: "/campaigns/$id",
+          params: { id: results[selectedIndex].id },
+        });
+        resetSearch();
+        setShowResults(false);
+      }
     } else if (e.key === "Escape") {
       setShowResults(false);
     }
@@ -81,9 +80,8 @@ export default function AppLayout({ children }: PropsWithChildren) {
         className={cn(
           "fixed inset-y-0 left-0 z-50 flex w-4/5 max-w-2xs flex-col overflow-auto bg-gray-100 transition-all duration-300 md:static",
           {
-            "-translate-x-full invisible md:visible md:translate-x-0":
-              !isSidebarOpen,
-          }
+            "invisible -translate-x-full md:visible md:translate-x-0": !isSidebarOpen,
+          },
         )}
       >
         <header className="px-5">
@@ -149,9 +147,7 @@ export default function AppLayout({ children }: PropsWithChildren) {
             <p className="bg-linear-to-r from-teal-600 to-purple-700 bg-clip-text py-1 font-semibold text-sm text-transparent">
               Need help?
             </p>
-            <p className="font-medium text-xs">
-              We&apos;re readily available to provide help
-            </p>
+            <p className="font-medium text-xs">We&apos;re readily available to provide help</p>
             <Button
               variant="outline"
               type="button"
@@ -198,7 +194,7 @@ export default function AppLayout({ children }: PropsWithChildren) {
                   hasQuery={hasQuery}
                   onSelect={handleSelect}
                   selectedIndex={selectedIndex}
-                  totalCount={totalCount}
+                  {...(totalCount && { totalCount })}
                   page={page}
                   pageSize={pageSize}
                   onPageChange={setPage}
@@ -215,26 +211,18 @@ export default function AppLayout({ children }: PropsWithChildren) {
               <button type="button" className="group flex items-center gap-3">
                 <hr className="my-0.5 mr-1 h-auto self-stretch border-gray-100 border-t-0 border-r" />
                 <Avatar>
-                  <AvatarImage
-                    src="https://github.com/purrrplelipton.png"
-                    alt="@purrrplelipton"
-                  />
+                  <AvatarImage src="https://github.com/purrrplelipton.png" alt="@purrrplelipton" />
                   <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
                 <div className="hidden items-center gap-2 text-xs transition-all duration-200 group-hover:text-teal-600 md:flex lg:text-sm">
                   <span>purrrplelipton</span>
-                  <Icon
-                    icon="mdi:chevron-down"
-                    className="text-2xl text-teal-600"
-                  />
+                  <Icon icon="mdi:chevron-down" className="text-2xl text-teal-600" />
                 </div>
               </button>
             </div>
           </div>
         </header>
-        <div className="container mx-auto flex grow flex-col overflow-auto p-5">
-          {children}
-        </div>
+        <div className="container mx-auto flex grow flex-col overflow-auto p-5">{children}</div>
       </main>
     </>
   );

@@ -1,22 +1,51 @@
-
-import { defineConfig } from 'vite'
-import { tanstackStart } from '@tanstack/react-start/plugin/vite'
-import viteReact from '@vitejs/plugin-react'
-import viteTsConfigPaths from 'vite-tsconfig-paths'
-import tailwindcss from '@tailwindcss/vite'
+import babel from "@rolldown/plugin-babel";
+import tailwindcss from "@tailwindcss/vite";
+import { tanstackStart } from "@tanstack/react-start/plugin/vite";
+import viteReact, { reactCompilerPreset } from "@vitejs/plugin-react";
+import { defineConfig, loadEnv } from "vite";
 import svgr from "vite-plugin-svgr";
-import { nitro } from "nitro/vite";
 
-export default defineConfig(({ mode }) => ({
-  plugins: [
-    // this is the plugin that enables path aliases
-    viteTsConfigPaths({
-      projects: ['./tsconfig.json'],
-    }),
-    mode === "production" ? nitro() : null, // Using the nitro plugin breaks vitest, so only enable it in production
-    tailwindcss(),
-    tanstackStart({ srcDirectory: 'src' }),
-    viteReact(),
-    svgr(),
-  ],
-}));
+const config = defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), "");
+
+  return {
+    base: env["BASE_URL"] || "/",
+    server: {
+      port: Number.parseInt(env["PORT"] || "5173", 10),
+    },
+    preview: {
+      port: Number.parseInt(env["PORT"] || "5173", 10),
+      allowedHosts: [],
+    },
+    plugins: [
+      tailwindcss(),
+      tanstackStart({
+        srcDirectory: "src",
+        spa: {
+          enabled: true,
+          maskPath: "/",
+          prerender: {
+            enabled: true,
+            outputPath: "/index.html",
+            autoSubfolderIndex: true,
+            crawlLinks: true,
+            retryCount: 3,
+            retryDelay: 1000,
+            onSuccess() {},
+          },
+        },
+      }),
+      viteReact(),
+      babel({
+        presets: [reactCompilerPreset()],
+      }),
+      svgr(),
+    ],
+    ...(env["NODE_ENV"] === "production" && { oxc: {} }),
+    resolve: {
+      tsconfigPaths: true,
+    },
+  };
+});
+
+export default config;

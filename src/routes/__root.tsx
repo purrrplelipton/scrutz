@@ -1,28 +1,23 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import {
-  createRootRoute,
-  HeadContent,
-  Link,
-  Scripts,
-} from "@tanstack/react-router";
+import { createRootRoute, HeadContent, Link, Scripts } from "@tanstack/react-router";
 import { lazy, type PropsWithChildren, Suspense, useState } from "react";
 import { Toaster } from "sonner";
-import appCss from "~/styles.css?url";
+import appCss from "#/styles.css?url";
 
 // Lazy load React Query Devtools only in development
 const ReactQueryDevtools = lazy(() =>
   import("@tanstack/react-query-devtools").then((module) => ({
     default: module.ReactQueryDevtools,
-  }))
+  })),
 );
 
 const TanStackRouterDevtools =
-  process.env.NODE_ENV === "production"
+  process.env["NODE_ENV"] === "production"
     ? () => null
     : lazy(() =>
         import("@tanstack/react-router-devtools").then((module) => ({
           default: module.TanStackRouterDevtools,
-        }))
+        })),
       );
 
 function RootComponent({ children }: PropsWithChildren) {
@@ -40,7 +35,7 @@ function RootComponent({ children }: PropsWithChildren) {
             retry: 1,
           },
         },
-      })
+      }),
   );
 
   return (
@@ -67,7 +62,7 @@ function RootComponent({ children }: PropsWithChildren) {
               },
             }}
           />
-          {process.env.NODE_ENV === "development" && (
+          {process.env["NODE_ENV"] === "development" && (
             <Suspense fallback={null}>
               <ReactQueryDevtools initialIsOpen={false} />
               <TanStackRouterDevtools />

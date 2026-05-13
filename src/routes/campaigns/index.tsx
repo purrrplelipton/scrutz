@@ -4,22 +4,21 @@ import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import lodash from "lodash";
 import { type ChangeEvent, useEffect, useMemo, useState } from "react";
 import { z } from "zod";
-import AppLayout from "~/components/app-layout";
-import { CampaignFilters } from "~/components/campaigns/campaigns-filters";
-import { CampaignTable } from "~/components/campaigns/campaigns-table";
-import { DeleteConfirmationDialog } from "~/components/campaigns/delete-confirmation-dialog";
-import { SuccessDialog } from "~/components/campaigns/success-dialog";
-import { PaginationControls } from "~/components/pagination-controls";
-import { useCampaigns, useDeleteCampaign } from "~/lib/hooks/use-campaigns";
+import AppLayout from "#/components/app-layout";
+import { CampaignFilters } from "#/components/campaigns/campaigns-filters";
+import { CampaignTable } from "#/components/campaigns/campaigns-table";
+import { DeleteConfirmationDialog } from "#/components/campaigns/delete-confirmation-dialog";
+import { SuccessDialog } from "#/components/campaigns/success-dialog";
+import { PaginationControls } from "#/components/pagination-controls";
+import { useCampaigns, useDeleteCampaign } from "#/lib/hooks/use-campaigns";
 
 const campaignSearchSchema = z.object({
   status: fallback(z.enum(["All", "Active", "Inactive"]), "All").default("All"),
   page: fallback(z.number(), 1).default(1),
   search: fallback(z.string(), "").default(""),
-  date: fallback(
-    z.enum(["today", "this-week", "this-month", "this-year"]),
-    "today"
-  ).default("today"),
+  date: fallback(z.enum(["today", "this-week", "this-month", "this-year"]), "today").default(
+    "today",
+  ),
 });
 
 export const Route = createFileRoute("/campaigns/")({
@@ -29,12 +28,7 @@ export const Route = createFileRoute("/campaigns/")({
 
 function Campaigns() {
   const navigate = useNavigate();
-  const {
-    status: activeTab,
-    page: currentPage,
-    search: searchQuery,
-    date,
-  } = Route.useSearch();
+  const { status: activeTab, page: currentPage, search: searchQuery, date } = Route.useSearch();
 
   const [dateFilter, setDateFilter] = useState(date);
   const [searchInputValue, setSearchInputValue] = useState(searchQuery);
@@ -65,7 +59,7 @@ function Campaigns() {
     {
       enableRealtime: true,
       refetchInterval: 30000, // Poll every 30 seconds
-    }
+    },
   );
 
   useEffect(() => {
@@ -78,27 +72,18 @@ function Campaigns() {
 
   const filteredData = data?.data || [];
   const displayedCampaigns = filteredData.filter((campaign) => {
-    if (activeTab === "Active" && campaign.campaignStatus !== "Active")
-      return false;
-    if (activeTab === "Inactive" && campaign.campaignStatus !== "Inactive")
-      return false;
+    if (activeTab === "Active" && campaign.campaignStatus !== "Active") return false;
+    if (activeTab === "Inactive" && campaign.campaignStatus !== "Inactive") return false;
 
-    if (
-      searchQuery &&
-      !campaign.campaignName.toLowerCase().includes(searchQuery.toLowerCase())
-    ) {
+    if (searchQuery && !campaign.campaignName.toLowerCase().includes(searchQuery.toLowerCase())) {
       return false;
     }
 
     return true;
   });
 
-  const ActiveCount = filteredData.filter(
-    (c) => c.campaignStatus === "Active"
-  ).length;
-  const InactiveCount = filteredData.filter(
-    (c) => c.campaignStatus === "Inactive"
-  ).length;
+  const ActiveCount = filteredData.filter((c) => c.campaignStatus === "Active").length;
+  const InactiveCount = filteredData.filter((c) => c.campaignStatus === "Inactive").length;
 
   const pageSize = 10;
   const totalFilteredCount = displayedCampaigns.length;
@@ -119,7 +104,7 @@ function Campaigns() {
           },
         });
       }, 300),
-    [navigate, activeTab, dateFilter]
+    [navigate, activeTab, dateFilter],
   );
 
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
@@ -154,10 +139,7 @@ function Campaigns() {
     <AppLayout>
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2 text-gray-500 text-sm">
-          <Icon
-            icon="mdi:circle"
-            className="animate-pulse text-green-500 text-xs"
-          />
+          <Icon icon="mdi:circle" className="animate-pulse text-green-500 text-xs" />
           <span>Live updates enabled</span>
         </div>
         <div className="text-gray-400 text-xs">

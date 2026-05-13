@@ -1,15 +1,15 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { lazy, useState } from "react";
 import { useForm } from "react-hook-form";
-import AppLayout from "~/components/app-layout";
-import { SuccessDialog } from "~/components/campaigns/success-dialog";
-import { useCreateCampaign } from "~/lib/hooks/use-campaigns";
-import type { CreateCampaignDto } from "~/types";
+import AppLayout from "#/components/app-layout";
+import { SuccessDialog } from "#/components/campaigns/success-dialog";
+import { useCreateCampaign } from "#/lib/hooks/use-campaigns";
+import type { CreateCampaignDto } from "#/types";
 
 const CampaignForm = lazy(() =>
-  import("~/components/campaigns/campaign-form").then((module) => ({
+  import("#/components/campaigns/campaign-form").then((module) => ({
     default: module.CampaignForm,
-  }))
+  })),
 );
 
 export const Route = createFileRoute("/campaigns/new")({
@@ -66,15 +66,14 @@ function NewCampaign() {
 
   return (
     <AppLayout>
-      <p className="mb-7 font-semibold text-teal-600 text-xl">
-        Create new campaign
-      </p>
+      <p className="mb-7 font-semibold text-teal-600 text-xl">Create new campaign</p>
       <div className="mx-auto w-full max-w-2xl">
         <CampaignForm
           form={form}
           onSubmit={onSubmit}
           onCancel={handleCancel}
           submitButtonText="Create Campaign"
+          disableNavigationBlocking={showSuccessDialog}
         />
       </div>
 

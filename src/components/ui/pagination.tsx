@@ -1,6 +1,6 @@
 import { Icon } from "@iconify-icon/react";
 import type { ComponentProps } from "react";
-import { cn } from "~/lib/utils";
+import { cn } from "#/lib/utils";
 
 function Pagination({ className, ...props }: ComponentProps<"nav">) {
   return (
@@ -31,11 +31,7 @@ type PaginationButtonProps = {
   isActive?: boolean;
 } & ComponentProps<"button">;
 
-function PaginationButton({
-  className,
-  isActive,
-  ...props
-}: PaginationButtonProps) {
+function PaginationButton({ className, isActive, ...props }: PaginationButtonProps) {
   return (
     <button
       type="button"
@@ -48,7 +44,7 @@ function PaginationButton({
           "bg-teal-600 font-bold text-white shadow-md": isActive,
           "hover:bg-gray-100": !isActive,
         },
-        className
+        className,
       )}
       disabled={isActive}
       {...props}
@@ -70,10 +66,4 @@ function PaginationEllipsis({ className, ...props }: ComponentProps<"span">) {
   );
 }
 
-export {
-  Pagination,
-  PaginationContent,
-  PaginationButton,
-  PaginationItem,
-  PaginationEllipsis,
-};
+export { Pagination, PaginationButton, PaginationContent, PaginationEllipsis, PaginationItem };

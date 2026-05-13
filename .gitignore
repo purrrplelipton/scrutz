@@ -14,3 +14,6 @@ todos.json
 
 # Lefthook local overrides
 lefthook-local.yml
+
+# Local Netlify folder
+.netlify

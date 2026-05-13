@@ -1,5 +1,5 @@
 import { Icon } from "@iconify-icon/react";
-import { Button } from "~/components/ui/button";
+import { Button } from "#/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -7,7 +7,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "~/components/ui/dialog";
+} from "#/components/ui/dialog";
 
 interface DeleteConfirmationDialogProps {
   open: boolean;
@@ -28,12 +28,9 @@ export function DeleteConfirmationDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md" aria-describedby={undefined}>
         <DialogHeader className="space-y-3">
-          <DialogTitle className="text-center text-xl">
-            Stop Campaign
-          </DialogTitle>
+          <DialogTitle className="text-center text-xl">Stop Campaign</DialogTitle>
           <DialogDescription className="text-center text-gray-600">
-            Are You sure you want to delete &ldquo;{campaignName}&rdquo;
-            campaign?
+            Are You sure you want to delete &ldquo;{campaignName}&rdquo; campaign?
             <br />
             This action cannot be undone.
           </DialogDescription>
@@ -42,16 +39,8 @@ export function DeleteConfirmationDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button
-            onClick={onConfirm}
-            disabled={isPending}
-            variant="destructive"
-          >
-            {isPending ? (
-              <Icon icon="svg-spinners:ring-resize" />
-            ) : (
-              "Delete Campaign"
-            )}
+          <Button onClick={onConfirm} disabled={isPending} variant="destructive">
+            {isPending ? <Icon icon="svg-spinners:ring-resize" /> : "Delete Campaign"}
           </Button>
         </DialogFooter>
       </DialogContent>

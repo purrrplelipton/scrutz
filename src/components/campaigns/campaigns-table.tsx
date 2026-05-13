@@ -1,7 +1,7 @@
 import { Icon } from "@iconify-icon/react";
 import { Link } from "@tanstack/react-router";
 import { format } from "date-fns";
-import { cn } from "~/lib/utils";
+import { cn } from "#/lib/utils";
 
 interface Campaign {
   id: string;
@@ -43,20 +43,14 @@ export function CampaignTable({
           {isLoading ? (
             <tr>
               <td colSpan={5} className="text-center">
-                <Icon
-                  icon="svg-spinners:ring-resize"
-                  className="mr-2 inline text-2xl"
-                />
+                <Icon icon="svg-spinners:ring-resize" className="mr-2 inline text-2xl" />
                 Loading campaigns...
               </td>
             </tr>
           ) : isError ? (
             <tr>
               <td colSpan={5} className="text-center text-red-600">
-                <Icon
-                  icon="material-symbols:error"
-                  className="mr-2 inline text-2xl"
-                />
+                <Icon icon="material-symbols:error" className="mr-2 inline text-2xl" />
                 Failed to load campaigns
               </td>
             </tr>
@@ -79,9 +73,7 @@ export function CampaignTable({
                   <span
                     className={cn(
                       "font-bold font-syne uppercase",
-                      campaign.campaignStatus === "Active"
-                        ? "text-green-600"
-                        : "text-red-700"
+                      campaign.campaignStatus === "Active" ? "text-green-600" : "text-red-700",
                     )}
                   >
                     {campaign.campaignStatus}
@@ -108,9 +100,7 @@ export function CampaignTable({
                     <button
                       type="button"
                       className="transition-all duration-200 hover:scale-110 hover:text-red-600"
-                      onClick={() =>
-                        onDelete(campaign.id, campaign.campaignName)
-                      }
+                      onClick={() => onDelete(campaign.id, campaign.campaignName)}
                       title="Delete campaign"
                     >
                       <Icon icon="material-symbols:delete" />

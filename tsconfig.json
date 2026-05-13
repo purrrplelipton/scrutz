@@ -1,28 +1,42 @@
 {
   "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules", "dist", "build"],
   "compilerOptions": {
     "target": "ES2022",
     "jsx": "react-jsx",
     "module": "ESNext",
+    "paths": {
+      "#/*": ["./src/*"]
+    },
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "types": ["vite/client"],
 
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
-    "verbatimModuleSyntax": false,
+    "allowJs": true,
+    "checkJs": true, // type-check your .js files too, not just .ts
+    "verbatimModuleSyntax": true,
     "noEmit": true,
+
+    /* Stricter type safety */
+    "strict": true, // already enables a bundle of checks, but the below go further
+    "noImplicitOverride": true, // must explicitly mark overriding class methods with `override`
+    "noPropertyAccessFromIndexSignature": true, // forces obj["key"] over obj.key for index-sig types, making intent explicit
+    "exactOptionalPropertyTypes": true, // distinguishes `prop?: string` (absent) from `prop: string | undefined` (present but undefined)
+    "noUncheckedIndexedAccess": true, // arr[0] becomes T | undefined instead of T — catches a huge class of runtime bugs
 
     /* Linting */
     "skipLibCheck": true,
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    // "noUnusedLocals": true,
+    // "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
-    "baseUrl": ".",
-    "paths": {
-      "~/*": ["./src/*"],
-    }
+
+    /* DX / tooling */
+    "sourceMap": true, // source maps for debugger and error stack traces even with noEmit (Vite uses these)
+    "resolveJsonModule": true, // import foo from './foo.json' just works
+    "isolatedModules": true, // ensures every file can be transpiled independently — required for Vite/esbuild correctness
+    "esModuleInterop": true // smoother default imports from CJS packages (e.g. `import React from 'react'`)
   }
 }

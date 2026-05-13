@@ -18,16 +18,16 @@ import axios, {
   type AxiosResponse,
   type InternalAxiosRequestConfig,
 } from "axios";
-import { toast } from "~/lib/toast";
+import { toast } from "#/lib/toast";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api";
+const API_BASE_URL = import.meta.env["VITE_API_BASE_URL"] || "/api";
 
 export class ApiError extends Error {
   constructor(
     message: string,
     public status: number,
     public data?: unknown,
-    public code?: string
+    public code?: string,
   ) {
     super(message);
     this.name = "ApiError";
@@ -103,7 +103,7 @@ axiosInstance.interceptors.request.use(
 
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 /**
@@ -113,10 +113,7 @@ axiosInstance.interceptors.response.use(
   (response: AxiosResponse) => {
     // Log request duration in dev mode
     if (import.meta.env.DEV && response.config.metadata) {
-      const duration = Date.now() - response.config.metadata.startTime;
-      console.log(
-        `✓ ${response.config.method?.toUpperCase()} ${response.config.url} (${duration}ms)`
-      );
+      const _duration = Date.now() - response.config.metadata.startTime;
     }
     return response;
   },
@@ -157,17 +154,13 @@ axiosInstance.interceptors.response.use(
 
     // Auto-retry on network errors or 5xx errors
     const retryCount = originalRequest._retryCount || 0;
-    const shouldRetry =
-      retryCount < 3 && (!error.response || error.response.status >= 500);
+    const shouldRetry = retryCount < 3 && (!error.response || error.response.status >= 500);
 
     if (shouldRetry) {
       originalRequest._retryCount = retryCount + 1;
       const delay = getRetryDelay(retryCount);
 
       if (import.meta.env.DEV) {
-        console.log(
-          `⟳ Retrying request (${retryCount + 1}/3) after ${delay}ms...`
-        );
       }
 
       await sleep(delay);
@@ -181,15 +174,12 @@ axiosInstance.interceptors.response.use(
           description: "Please check your internet connection",
         });
       }
-      return Promise.reject(
-        new ApiError("Network error", 0, undefined, error.code)
-      );
+      return Promise.reject(new ApiError("Network error", 0, undefined, error.code));
     }
 
     // Show toast for errors
     if (originalRequest.showToast !== false) {
-      const errorMessage =
-        (error.response.data as { message?: string })?.message || error.message;
+      const errorMessage = (error.response.data as { message?: string })?.message || error.message;
       toast.error("Request failed", {
         description: errorMessage,
       });
@@ -200,20 +190,17 @@ axiosInstance.interceptors.response.use(
       (error.response.data as { message?: string })?.message || error.message,
       error.response.status,
       error.response.data,
-      error.code
+      error.code,
     );
 
     return Promise.reject(apiError);
-  }
+  },
 );
 
 /**
  * Make API request with optional deduplication
  */
-async function request<T>(
-  endpoint: string,
-  config: ApiClientConfig = {}
-): Promise<T> {
+async function request<T>(endpoint: string, config: ApiClientConfig = {}): Promise<T> {
   const { showToast = false, deduplicate = false, ...axiosConfig } = config;
 
   // Build full Axios config
@@ -307,8 +294,7 @@ export const queryKeys = {
   campaigns: {
     all: ["campaigns"] as const,
     lists: () => [...queryKeys.campaigns.all, "list"] as const,
-    list: (filters: Record<string, unknown>) =>
-      [...queryKeys.campaigns.lists(), filters] as const,
+    list: (filters: Record<string, unknown>) => [...queryKeys.campaigns.lists(), filters] as const,
     details: () => [...queryKeys.campaigns.all, "detail"] as const,
     detail: (id: string) => [...queryKeys.campaigns.details(), id] as const,
   },

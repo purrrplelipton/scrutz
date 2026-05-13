@@ -44,9 +44,9 @@ const CampaignsIdEditRoute = CampaignsIdEditRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/campaigns/new': typeof CampaignsNewRoute
-  '/campaigns': typeof CampaignsIndexRoute
+  '/campaigns/': typeof CampaignsIndexRoute
   '/campaigns/$id/edit': typeof CampaignsIdEditRoute
-  '/campaigns/$id': typeof CampaignsIdIndexRoute
+  '/campaigns/$id/': typeof CampaignsIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -68,9 +68,9 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/campaigns/new'
-    | '/campaigns'
+    | '/campaigns/'
     | '/campaigns/$id/edit'
-    | '/campaigns/$id'
+    | '/campaigns/$id/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -107,7 +107,7 @@ declare module '@tanstack/react-router' {
     '/campaigns/': {
       id: '/campaigns/'
       path: '/campaigns'
-      fullPath: '/campaigns'
+      fullPath: '/campaigns/'
       preLoaderRoute: typeof CampaignsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -121,7 +121,7 @@ declare module '@tanstack/react-router' {
     '/campaigns/$id/': {
       id: '/campaigns/$id/'
       path: '/campaigns/$id'
-      fullPath: '/campaigns/$id'
+      fullPath: '/campaigns/$id/'
       preLoaderRoute: typeof CampaignsIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }

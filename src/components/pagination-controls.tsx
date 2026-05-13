@@ -5,7 +5,7 @@ import {
   PaginationContent,
   PaginationEllipsis,
   PaginationItem,
-} from "~/components/ui/pagination";
+} from "#/components/ui/pagination";
 
 interface PaginationControlsProps {
   currentPage: number;
@@ -23,9 +23,7 @@ export function PaginationControls({
   const totalPages = Math.ceil(totalCount / pageSize);
 
   const generatePaginationNumbers = () => {
-    const pages: Array<
-      { type: "page"; value: number } | { type: "ellipsis"; id: string }
-    > = [];
+    const pages: Array<{ type: "page"; value: number } | { type: "ellipsis"; id: string }> = [];
 
     if (totalPages <= 7) {
       for (let i = 1; i <= totalPages; i++) {
@@ -88,7 +86,7 @@ export function PaginationControls({
                   {item.value}
                 </PaginationButton>
               </PaginationItem>
-            )
+            ),
           )}
 
           <PaginationItem>
@@ -105,8 +103,8 @@ export function PaginationControls({
       </Pagination>
 
       <p className="@md:block hidden">
-        showing {(currentPage - 1) * pageSize + 1} to{" "}
-        {Math.min(currentPage * pageSize, totalCount)} of {totalCount} results
+        showing {(currentPage - 1) * pageSize + 1} to {Math.min(currentPage * pageSize, totalCount)}{" "}
+        of {totalCount} results
       </p>
     </div>
   );

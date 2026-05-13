@@ -138,7 +138,7 @@ function promise<T>(
     success: string | ((data: T) => string);
     error: string | ((error: unknown) => string);
   },
-  options?: ToastOptions
+  options?: ToastOptions,
 ) {
   return sonnerToast.promise(promise, {
     loading: messages.loading,
@@ -180,7 +180,7 @@ function api(
   operation: "create" | "update" | "delete",
   resource: string,
   status: "success" | "error",
-  details?: string
+  details?: string,
 ) {
   const messages = {
     create: {
@@ -209,20 +209,14 @@ function api(
 /**
  * Show a custom toast with rich content
  */
-function custom(
-  content: (id: string | number) => React.ReactElement,
-  options?: ToastOptions
-) {
+function custom(content: (id: string | number) => React.ReactElement, options?: ToastOptions) {
   return sonnerToast.custom(content, options);
 }
 
 /**
  * Batch multiple toasts (useful for bulk operations)
  */
-function batch(
-  messages: Array<{ type: "success" | "error"; message: string }>,
-  summary?: string
-) {
+function batch(messages: Array<{ type: "success" | "error"; message: string }>, summary?: string) {
   const successCount = messages.filter((m) => m.type === "success").length;
   const errorCount = messages.filter((m) => m.type === "error").length;
 
@@ -264,7 +258,7 @@ const themed = {
         () => {
           info("Undo functionality coming soon!");
         },
-        { description: "This action can be undone" }
+        { description: "This action can be undone" },
       ),
   },
 

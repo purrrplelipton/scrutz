@@ -1,123 +1,110 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.3.1/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.4.15/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
     "useIgnoreFile": true,
-    "defaultBranch": "master"
+    "defaultBranch": "main"
   },
   "files": {
-    "ignoreUnknown": false,
+    "ignoreUnknown": true,
     "includes": [
       "**/src/**/*",
       "**/.vscode/**/*",
       "**/index.html",
-      "**/vite.config.js",
+      "**/vite.config.ts",
       "!**/src/routeTree.gen.ts",
-      "!**/src/styles.css"
+      "!**/src/styles.css",
+      "!**/src/paraglide/**/*"
     ]
   },
   "formatter": {
     "enabled": true,
     "indentStyle": "space",
     "indentWidth": 2,
-    "lineWidth": 80,
-    "attributePosition": "auto"
+    "lineWidth": 100,
+    "lineEnding": "lf"
+  },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
   },
   "linter": {
     "enabled": true,
     "rules": {
       "recommended": true,
-      "a11y": {
-        "recommended": true
-      },
-      "complexity": {
-        "recommended": true
-      },
-      "correctness": {
-        "recommended": true
-      },
       "nursery": {
-        "recommended": true,
         "useSortedClasses": {
-          "level": "error",
+          "level": "warn",
           "options": {
-            "attributes": ["className"],
-            "functions": ["cn", "cva", "clsx"]
+            "attributes": ["class", "className", "classList"],
+            "functions": ["clsx", "cva", "cn", "tw"]
           }
         }
       },
-      "performance": {
-        "recommended": true
+      "complexity": {
+        "noExcessiveCognitiveComplexity": {
+          "level": "warn",
+          "options": { "maxAllowedComplexity": 25 }
+        },
+        "useLiteralKeys": "off",
+        "useSimplifiedLogicExpression": "warn"
       },
-      "security": {
-        "recommended": true
+      "correctness": {
+        "noUnusedImports": "error",
+        "noUnusedVariables": "error",
+        "useExhaustiveDependencies": "warn",
+        "noConstantMathMinMaxClamp": "warn"
       },
       "style": {
-        "recommended": true,
-        "useImportType": "error",
-        "useConsistentArrayType": "error"
+        "noNonNullAssertion": "warn",
+        "useBlockStatements": "off",
+        "useCollapsedElseIf": "warn",
+        "useConsistentArrayType": {
+          "level": "warn",
+          "options": { "syntax": "shorthand" }
+        },
+        "useForOf": "warn",
+        "useShorthandAssign": "warn",
+        "useTemplate": "warn",
+        "noParameterAssign": "error"
       },
       "suspicious": {
-        "recommended": true
-      }
-    }
-  },
-  "assist": {
-    "actions": {
-      "source": {
-        "recommended": true
+        "noConsole": {
+          "level": "warn",
+          "options": { "allow": ["warn", "error"] }
+        },
+        "noExplicitAny": "warn",
+        "useAwait": "error",
+        "noSkippedTests": "warn",
+        "noFocusedTests": "error"
+      },
+      "performance": {
+        "noBarrelFile": "warn",
+        "noReExportAll": "warn"
       }
     }
   },
   "javascript": {
     "formatter": {
-      "enabled": true,
       "quoteStyle": "double",
-      "jsxQuoteStyle": "double",
-      "trailingCommas": "es5",
+      "trailingCommas": "all",
       "semicolons": "always",
       "arrowParentheses": "always",
       "bracketSpacing": true,
-      "bracketSameLine": false,
-      "quoteProperties": "asNeeded",
-      "attributePosition": "auto"
+      "bracketSameLine": false
     }
   },
   "json": {
     "formatter": {
       "enabled": true,
-      "indentStyle": "space",
-      "indentWidth": 2,
-      "lineWidth": 80
-    },
-    "parser": {
-      "allowComments": true,
-      "allowTrailingCommas": false
-    }
-  },
-  "css": {
-    "formatter": {
-      "enabled": true,
-      "indentStyle": "space",
-      "indentWidth": 2,
-      "lineWidth": 80,
-      "quoteStyle": "double"
+      "trailingCommas": "none"
     },
     "linter": {
-      "enabled": false
+      "enabled": true
     }
-  },
-  "overrides": [
-    {
-      "includes": ["**/*.config.{js,ts,mjs,cjs}"],
-      "linter": {
-        "rules": {
-          "style": {
-            "noDefaultExport": "off"
-          }
-        }
-      }
-    }
-  ]
+  }
 }

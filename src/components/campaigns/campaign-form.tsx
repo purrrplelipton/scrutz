@@ -2,8 +2,8 @@ import { Icon } from "@iconify-icon/react";
 import { useBlocker } from "@tanstack/react-router";
 import { useEffect, useId, useState } from "react";
 import { Controller, type UseFormReturn } from "react-hook-form";
-import { NaturalLanguageDatePicker } from "~/components/natural-language-date-picker";
-import { Button } from "~/components/ui/button";
+import { NaturalLanguageDatePicker } from "#/components/natural-language-date-picker";
+import { Button } from "#/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -11,25 +11,25 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "~/components/ui/dialog";
-import { Input } from "~/components/ui/input";
+} from "#/components/ui/dialog";
+import { Input } from "#/components/ui/input";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
   InputGroupInput,
-} from "~/components/ui/input-group";
-import { Label } from "~/components/ui/label";
+} from "#/components/ui/input-group";
+import { Label } from "#/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "~/components/ui/select";
-import { Switch } from "~/components/ui/switch";
-import { Textarea } from "~/components/ui/textarea";
-import type { CreateCampaignDto } from "~/types";
+} from "#/components/ui/select";
+import { Switch } from "#/components/ui/switch";
+import { Textarea } from "#/components/ui/textarea";
+import type { CreateCampaignDto } from "#/types";
 
 interface CampaignFormProps {
   form: UseFormReturn<CreateCampaignDto>;
@@ -37,6 +37,7 @@ interface CampaignFormProps {
   onCancel: () => unknown;
   submitButtonText?: string;
   showDirtyCheck?: boolean;
+  disableNavigationBlocking?: boolean;
   initialStartDate?: string; // Original start date for edit mode
 }
 
@@ -46,6 +47,7 @@ export function CampaignForm({
   onCancel,
   submitButtonText = "Submit",
   showDirtyCheck = false,
+  disableNavigationBlocking = false,
   initialStartDate,
 }: CampaignFormProps) {
   const campaignNameId = useId();
@@ -66,6 +68,11 @@ export function CampaignForm({
     watch,
   } = form;
 
+  const { ref: linkedKeywordsRef, ...linkedKeywordsRegister } = register("linkedKeywords", {
+    validate: (value) =>
+      Array.isArray(value) && value.length > 0 ? true : "At least one keyword is required",
+  });
+
   const linkedKeywords = watch("linkedKeywords");
   const digestCampaign = watch("digestCampaign");
   const campaignName = watch("campaignName");
@@ -81,11 +88,12 @@ export function CampaignForm({
       campaignDescription ||
       startDate ||
       endDate ||
-      (linkedKeywords && linkedKeywords.length > 0)
+      (linkedKeywords && linkedKeywords.length > 0),
   );
 
   // Determine if user has unsaved changes based on context
   const hasUnsavedChanges = showDirtyCheck ? isDirty : hasFormData;
+  const shouldBlockNavigation = !disableNavigationBlocking && hasUnsavedChanges;
 
   // Prevent browser navigation (back/forward/refresh) when there's unsaved data
   useEffect(() => {
@@ -107,7 +115,7 @@ export function CampaignForm({
   // Block React Router navigation when there's unsaved data
   const blocker = useBlocker({
     shouldBlockFn: ({ current, next }) =>
-      hasUnsavedChanges && current.pathname !== next.pathname,
+      shouldBlockNavigation && current.pathname !== next.pathname,
     withResolver: true,
   });
 
@@ -125,7 +133,7 @@ export function CampaignForm({
   }, [startDate, endDate, trigger]);
 
   const validateDates = () => {
-    if (!startDate || !endDate) return false;
+    if (!(startDate && endDate)) return false;
 
     const start = new Date(startDate);
     const end = new Date(endDate);
@@ -166,7 +174,7 @@ export function CampaignForm({
       endDate &&
       linkedKeywords &&
       linkedKeywords.length > 0 &&
-      validateDates()
+      validateDates(),
   );
 
   const handleCancelClick = () => {
@@ -201,7 +209,11 @@ export function CampaignForm({
   const addKeyword = () => {
     if (linkedKeyword.trim()) {
       const currentKeywords = watch("linkedKeywords") || [];
-      setValue("linkedKeywords", [...currentKeywords, linkedKeyword.trim()]);
+      setValue("linkedKeywords", [...currentKeywords, linkedKeyword.trim()], {
+        shouldValidate: true,
+        shouldDirty: true,
+        shouldTouch: true,
+      });
       setLinkedKeyword("");
       clearErrors("linkedKeywords");
     }
@@ -225,12 +237,9 @@ export function CampaignForm({
       <Dialog open={showExitDialog} onOpenChange={handleCancelExit}>
         <DialogContent className="sm:max-w-md" aria-describedby={undefined}>
           <DialogHeader className="space-y-3">
-            <DialogTitle className="text-center text-xl">
-              Confirm Exit
-            </DialogTitle>
+            <DialogTitle className="text-center text-xl">Confirm Exit</DialogTitle>
             <DialogDescription className="text-center text-gray-600">
-              You have unsaved changes. Are you sure you want to leave? All
-              progress will be lost.
+              You have unsaved changes. Are you sure you want to leave? All progress will be lost.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="grid grid-cols-2 gap-4">
@@ -260,9 +269,7 @@ export function CampaignForm({
             aria-invalid={errors.campaignName ? "true" : "false"}
           />
           {errors.campaignName && (
-            <p className="text-red-600 text-xs">
-              {errors.campaignName.message}
-            </p>
+            <p className="text-red-600 text-xs">{errors.campaignName.message}</p>
           )}
         </div>
 
@@ -282,9 +289,7 @@ export function CampaignForm({
             className="min-h-32"
           />
           {errors.campaignDescription && (
-            <p className="text-red-600 text-xs">
-              {errors.campaignDescription.message}
-            </p>
+            <p className="text-red-600 text-xs">{errors.campaignDescription.message}</p>
           )}
         </div>
 
@@ -321,10 +326,12 @@ export function CampaignForm({
             render={({ field }) => (
               <NaturalLanguageDatePicker
                 label="Start Date"
-                value={field.value ? new Date(field.value) : undefined}
+                {...(field.value && { value: new Date(field.value) })}
                 onChange={(date) => field.onChange(date?.toISOString())}
                 placeholder="e.g., tomorrow, next week"
-                error={errors.startDate?.message}
+                {...(errors.startDate?.message && {
+                  error: errors.startDate.message,
+                })}
               />
             )}
           />
@@ -334,7 +341,7 @@ export function CampaignForm({
             rules={{
               required: "End date is required",
               validate: (value) => {
-                if (!value || !startDate) return true;
+                if (!(value && startDate)) return true;
                 const start = new Date(startDate);
                 const end = new Date(value);
                 const today = new Date();
@@ -359,28 +366,24 @@ export function CampaignForm({
             render={({ field }) => (
               <NaturalLanguageDatePicker
                 label="End Date"
-                value={field.value ? new Date(field.value) : undefined}
+                {...(field.value && { value: new Date(field.value) })}
                 onChange={(date) => field.onChange(date?.toISOString())}
                 placeholder="e.g., in 2 weeks"
-                error={errors.endDate?.message}
+                {...(errors.endDate?.message && {
+                  error: errors.endDate.message,
+                })}
               />
             )}
           />
         </div>
 
         <div className="flex items-center justify-between py-2">
-          <Label htmlFor={dailyDigestId}>
-            Want to receive daily digest about the campaign?
-          </Label>
+          <Label htmlFor={dailyDigestId}>Want to receive daily digest about the campaign?</Label>
           <Controller
             name="digestCampaign"
             control={control}
             render={({ field }) => (
-              <Switch
-                id={dailyDigestId}
-                checked={field.value}
-                onCheckedChange={field.onChange}
-              />
+              <Switch id={dailyDigestId} checked={field.value} onCheckedChange={field.onChange} />
             )}
           />
         </div>
@@ -389,15 +392,16 @@ export function CampaignForm({
           <Label htmlFor={keywordsId}>Linked Keywords</Label>
           {linkedKeywords && linkedKeywords.length > 0 && (
             <div className="mb-2 flex flex-wrap gap-2">
-              {linkedKeywords.map((keyword, index) => (
+              {linkedKeywords.map((keyword, i) => (
                 <span
-                  key={`${index}-${keyword}`}
+                  // biome-ignore lint/suspicious/noArrayIndexKey: Keywords are not expected to change order or be removed from the middle, so index is sufficient as key
+                  key={`${keyword}-${i}`}
                   className="inline-flex items-center gap-1 rounded-full bg-teal-600 py-0.5 pr-1 pl-2 text-white text-xs"
                 >
                   <span>{keyword}</span>
                   <button
                     type="button"
-                    onClick={() => removeKeyword(index)}
+                    onClick={() => removeKeyword(i)}
                     className="rounded-full p-px hover:bg-white/20"
                     aria-label="Remove keyword"
                   >
@@ -413,6 +417,12 @@ export function CampaignForm({
               placeholder="Enter a keyword"
               value={linkedKeyword}
               onChange={(e) => setLinkedKeyword(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  addKeyword();
+                }
+              }}
               aria-invalid={errors.linkedKeywords ? "true" : "false"}
             />
             <InputGroupAddon align="inline-end">
@@ -425,10 +435,9 @@ export function CampaignForm({
               </InputGroupButton>
             </InputGroupAddon>
           </InputGroup>
+          <input type="hidden" {...linkedKeywordsRegister} ref={linkedKeywordsRef} />
           {errors.linkedKeywords && (
-            <p className="text-red-600 text-xs">
-              {errors.linkedKeywords.message}
-            </p>
+            <p className="text-red-600 text-xs">{errors.linkedKeywords.message}</p>
           )}
         </div>
 
@@ -467,15 +476,9 @@ export function CampaignForm({
           </Button>
           <Button
             type="submit"
-            disabled={
-              isSubmitting || (showDirtyCheck && !isDirty) || !isFormValid
-            }
+            disabled={isSubmitting || (showDirtyCheck && !isDirty) || !isFormValid}
           >
-            {isSubmitting ? (
-              <Icon icon="svg-spinners:ring-resize" />
-            ) : (
-              submitButtonText
-            )}
+            {isSubmitting ? <Icon icon="svg-spinners:ring-resize" /> : submitButtonText}
           </Button>
         </div>
       </form>

@@ -1,20 +1,11 @@
 import { Icon } from "@iconify-icon/react";
 import { parseDate } from "chrono-node";
 import { format } from "date-fns";
-import {
-  type ChangeEvent,
-  type KeyboardEvent,
-  useEffect,
-  useState,
-} from "react";
-import { Button } from "~/components/ui/button";
-import { Calendar } from "~/components/ui/calendar";
-import { Label } from "~/components/ui/label";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "~/components/ui/popover";
+import { type ChangeEvent, type KeyboardEvent, useEffect, useState } from "react";
+import { Button } from "#/components/ui/button";
+import { Calendar } from "#/components/ui/calendar";
+import { Label } from "#/components/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "#/components/ui/popover";
 import { InputGroup, InputGroupInput } from "./ui/input-group";
 
 function formatDate(date: Date | undefined) {
@@ -127,7 +118,7 @@ export function NaturalLanguageDatePicker({
               mode="single"
               selected={date}
               onSelect={handleDateSelect}
-              month={month}
+              {...(month && { month })}
               onMonthChange={setMonth}
               autoFocus
             />
